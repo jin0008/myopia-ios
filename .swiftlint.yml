@@ -1,0 +1,14 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - identifier_name
+
+opt_in_rules:
+  - empty_count
+  - force_unwrapping
+  - redundant_nil_coalescing
+
+excluded:
+  - DerivedData
+  - build
+  - Package.swift
