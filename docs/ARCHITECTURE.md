@@ -5,7 +5,7 @@
 ```
                 ┌───────────────────────────────┐
                 │       iPhone (iOS 17+)        │
-                │  MyopiaCareApp (SwiftUI)      │
+                │  Eyelog / 아이로그 (SwiftUI)   │
                 │                               │
                 │  ┌─────────────────────────┐  │
                 │  │ Auth providers          │  │
@@ -27,18 +27,18 @@
    │     Google Cloud Compute Engine (existing VM)       │
    │                                                     │
    │  ┌─────────────────────────────────────────────┐    │
-   │  │   Node/Express server (existing)            │    │
+   │  │   Node/Express/Prisma server (existing)     │    │
    │  │   /api/*     ← web routes (unchanged)       │    │
-   │  │   /api/mobile/*  ← NEW routes for iOS       │    │
+   │  │   /api/mobile/*  ← routes for Eyelog iOS    │    │
    │  └──────────────┬──────────────────────────────┘    │
    │                 │                                   │
    │  ┌──────────────▼──────────────┐                    │
    │  │ PostgreSQL (existing)       │                    │
    │  │ • patient, measurement, ... │                    │
-   │  │ • NEW: parent_guardian      │                    │
    │  │ • NEW: parent_child_link    │                    │
    │  │ • NEW: child_hospital_link  │                    │
-   │  │ • NEW: hospital_link_request│                    │
+   │  │ • NEW: mobile_refresh_token │                    │
+   │  │ • NEW: oauth_identity       │                    │
    │  └─────────────────────────────┘                    │
    └─────────────────────────────────────────────────────┘
 ```
@@ -47,24 +47,27 @@
 
 | Concept on web | Concept in app | Relationship |
 |----------------|----------------|--------------|
-| `user` (`regular_user` role) | **Parent/Guardian** account | 1:1 |
+| `user` (`normal_user` role) | **Parent/Guardian** account | 1:1 |
 | `patient` (registration_number + hospital_id) | **Child profile** | 1:N via `parent_child_link` |
 | `hospital` | Hospital a child visits | N:M via `child_hospital_link` |
 | `axial_length`, `refractive_error`, `mean_k`, `treatment` | Measurements shown in the app | fetched read-only |
 
-### Why a new `parent_guardian` concept?
+### Why a separate `parent_child_link` concept?
 
-The existing `user` table with role `regular_user` already represents a parent who has logged in. The web app lets that user *be* the patient, or create a patient record. The iOS app deliberately narrows this: a logged-in user can only manage **children** (never themselves as patient), and only via **linking** to clinical records that clinicians already entered.
+The existing `user` table with role `normal_user` already represents a parent who has logged in on the web. The iOS (Eyelog) app deliberately narrows what a logged-in parent can do: they can only manage **children** (never themselves as patient), and only view clinical data by **linking** to records that clinicians already entered on the web.
 
-In v1, we reuse `user` with `role='regular_user'` and introduce a `parent_child_link` table keyed by `(user_id, patient_id)`. No change to the existing `user` schema.
+We reuse `user` with `role='normal_user'` and introduce a `parent_child_link` table that stores the child profile (nickname / DOB / sex) without touching any hospital data. Linking to a hospital is a separate step that inserts a row in `child_hospital_link` referencing the existing `patient` row. No change to the existing `user` schema.
+
+**Deletion semantics:** when a parent removes a child from the app, we cascade-delete the `parent_child_link` row and any `child_hospital_link` rows, but `ON DELETE NO ACTION` on the FKs to `patient` and `hospital` means the hospital's patient record and all its measurements are preserved.
 
 ### Hospital linking rule
 
-A child is linked to a patient record only when **both** of these match an existing row in `patient`:
+A child is linked to a patient record only when **all** of these match an existing row in `patient`:
 1. `hospital_code` (the hospital's registration code in `hospital` table)
-2. `registration_number` (the patient's MRN at that hospital)
+2. `registration_number` (the patient's MRN at that hospital — compared via `registration_number_hash`, an HMAC; no plaintext is stored)
+3. the parent-entered `date_of_birth` (compared against the KMS-decrypted `encrypted_date_of_birth` on the patient row)
 
-A parent may also add the child's **date of birth** and **sex**, which must additionally match the stored record for the link to succeed (a "triple check" — reduces accidental linking to another child).
+All three must match exactly. On a mismatch the server returns `404 no matching record` without revealing which field was wrong.
 
 Multiple hospitals are supported: a child can be linked to `patient` rows at several hospitals. The app merges and deduplicates measurements across linked hospitals when rendering the chart.
 
@@ -78,7 +81,7 @@ Accept any of: Password, Google, Apple, Kakao, Naver. On success, the server iss
 2. iOS provider SDK returns an `idToken` (Google/Apple) or an `accessToken` (Kakao/Naver)
 3. App POSTs `{provider, token}` to `/api/mobile/auth/social`
 4. Server verifies the token against the provider's public keys / userinfo endpoint
-5. Server finds-or-creates a `user` row with `role='regular_user'` and an OAuth linking row
+5. Server finds-or-creates a `user` row with `role='normal_user'` and an `oauth_identity` row keyed by `(provider, subject)`
 6. Server returns `{accessToken, refreshToken, user}`
 7. App stores tokens in Keychain and transitions to the Home tab
 
@@ -126,7 +129,7 @@ Single `APIClient` (actor) with:
 - JSON date decoding with ISO-8601
 - Typed errors: `.unauthorized`, `.network`, `.server(code, message)`, `.decoding`
 
-See [`MyopiaCareApp/Core/Networking/APIClient.swift`](../MyopiaCareApp/Core/Networking/APIClient.swift).
+See [`Eyelog/Core/Networking/APIClient.swift`](../Eyelog/Core/Networking/APIClient.swift).
 
 ## 6. Data storage on device
 

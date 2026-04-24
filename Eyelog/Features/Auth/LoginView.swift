@@ -11,9 +11,13 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
-                Text("MyopiaCare")
-                    .font(.largeTitle.bold())
+                Image("BrandLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 64)
                     .padding(.top, 40)
+                Text("아이로그 · Eyelog")
+                    .font(.title2.bold())
                 Text("부모님 · 보호자를 위한 근시 관리 앱")
                     .foregroundStyle(.secondary)
 

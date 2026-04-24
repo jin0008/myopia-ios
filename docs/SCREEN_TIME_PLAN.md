@@ -13,7 +13,7 @@ Both require the **Family Controls entitlement**, which you must request from Ap
 ┌────────────────────┐                 ┌────────────────────┐
 │ Child iPhone       │                 │ Parent iPhone      │
 │ ─────────────      │                 │ ─────────────      │
-│ MyopiaCareApp      │  Family Sharing │ MyopiaCareApp      │
+│ Eyelog      │  Family Sharing │ Eyelog      │
 │ + DeviceActivity   │ ◄─────────────► │ (reads aggregated  │
 │   extension        │                 │  Near-work minutes)│
 │                    │                 │                    │

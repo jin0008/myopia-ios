@@ -5,7 +5,7 @@ import KakaoSDKAuth
 import NaverThirdPartyLogin
 
 @main
-struct MyopiaCareAppApp: App {
+struct EyelogApp: App {
 
     @StateObject private var session = SessionStore()
 

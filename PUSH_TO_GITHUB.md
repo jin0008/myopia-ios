@@ -1,6 +1,6 @@
 # Push this scaffold to a new GitHub repo
 
-> I created the scaffold inside your existing web repo at `myopia/myopia-ios/`. Step 1 moves it out so it becomes its own standalone repo.
+> The scaffold currently sits inside the web repo at `myopia/myopia-ios/`. Step 1 moves it out so it becomes its own standalone repo.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ cd ~/code/myopia-ios
 ```bash
 git init -b main
 git add .
-git commit -m "chore: initial scaffold for MyopiaCare iOS app"
+git commit -m "chore: initial scaffold for Eyelog iOS app"
 ```
 
 ## 3. Create the GitHub repo and push
@@ -29,7 +29,7 @@ git commit -m "chore: initial scaffold for MyopiaCare iOS app"
 # --private is recommended because this references your clinical product.
 gh repo create myopia-ios \
   --private \
-  --description "iPhone app for parents to monitor children's axial length via myopiamanage.org" \
+  --description "Eyelog — iPhone app for parents to monitor children's axial length via myopiamanage.org" \
   --source=. \
   --remote=origin \
   --push
@@ -39,25 +39,40 @@ This creates `https://github.com/<your-username>/myopia-ios` and pushes your `ma
 
 ## 4. Create the Xcode project inside the repo
 
-You'll need Xcode to create the `.xcodeproj` (it's binary, so I can't generate one from here cleanly).
+You'll need Xcode to create the `.xcodeproj` (it's binary, so it can't be generated cleanly from a text-only scaffold). Because the scaffold already has an `Eyelog/` folder with our sources in it, create the Xcode project in a **temp location** first, then move just the `.xcodeproj` into place — this avoids a folder-name collision.
 
 1. Open Xcode → **File → New → Project → iOS → App**.
-2. Product name: **MyopiaCareApp** · Team: your Apple Developer team · Organization identifier: e.g. `org.myopiamanage` · Interface: **SwiftUI** · Language: **Swift** · Minimum iOS: **17.0**.
-3. Save it into `~/code/myopia-ios/` (so the `.xcodeproj` sits next to the existing `MyopiaCareApp/` folder from the scaffold).
-4. In the Xcode Project Navigator, delete the auto-generated `ContentView.swift` and `MyopiaCareAppApp.swift` (the ones Xcode created — we will use the ones from this scaffold).
-5. Drag the scaffold's `MyopiaCareApp/App/`, `MyopiaCareApp/Core/`, `MyopiaCareApp/Features/` folders into the Xcode navigator. In the import dialog, check **Create groups** and **Add to target: MyopiaCareApp**.
-6. Add these Swift Package dependencies (File → Add Package Dependencies…):
+2. Product name: **Eyelog** · Team: your Apple Developer team · Organization identifier: e.g. `org.myopiamanage` · Interface: **SwiftUI** · Language: **Swift** · Minimum iOS: **17.0**.
+3. Save it into a throwaway folder like `~/Desktop/xcode-tmp/`. Xcode will create `~/Desktop/xcode-tmp/Eyelog/` with a `.xcodeproj` and some starter Swift files.
+4. Move the `.xcodeproj` into the repo and delete the throwaway tree:
+   ```bash
+   mv ~/Desktop/xcode-tmp/Eyelog/Eyelog.xcodeproj ~/code/myopia-ios/
+   rm -rf ~/Desktop/xcode-tmp
+   ```
+5. Open `~/code/myopia-ios/Eyelog.xcodeproj` in Xcode. The project will show missing-file warnings because the sources it was pointing at no longer exist. In the Project Navigator:
+   - **Remove** the auto-generated `EyelogApp.swift`, `ContentView.swift`, `Assets.xcassets`, and `Preview Content` references (Right-click → **Delete → Remove Reference**, NOT "Move to Trash").
+   - Drag the scaffold's `Eyelog/App/`, `Eyelog/Core/`, `Eyelog/Features/`, and `Eyelog/Resources/` folders from Finder into the navigator. In the import dialog, check **Create groups** and **Add to target: Eyelog**. Confirm `Assets.xcassets` is in the "Copy Bundle Resources" build phase.
+6. Point `INFOPLIST_FILE` at the scaffold's template: target → **Build Settings → Info.plist File** → `Eyelog/Resources/Info.plist`, and set `GENERATE_INFOPLIST_FILE = NO`. Then set the remaining build settings (target → Build Settings, or in an `.xcconfig`):
+   ```
+   PRODUCT_NAME = Eyelog
+   PRODUCT_BUNDLE_IDENTIFIER = org.myopiamanage.Eyelog
+   KAKAO_APP_KEY = <native-app-key>
+   NAVER_CONSUMER_KEY = <consumer-key>
+   NAVER_CONSUMER_SECRET = <consumer-secret>
+   API_BASE_URL = https://api.myopiamanage.org
+   ```
+7. Add these Swift Package dependencies (File → Add Package Dependencies…):
    - `https://github.com/google/GoogleSignIn-iOS`
    - `https://github.com/kakao/kakao-ios-sdk-spm` (KakaoSDKCommon, KakaoSDKAuth, KakaoSDKUser)
    - `https://github.com/naver/naveridlogin-sdk-ios-swift`
-7. In **Signing & Capabilities** → **+ Capability** → add **Sign in with Apple**.
-8. In `Info.plist`, add the URL schemes listed under `docs/ARCHITECTURE.md § Auth configuration`.
+8. In **Signing & Capabilities** → **+ Capability** → add **Sign in with Apple**.
+9. Drop the Google `GoogleService-Info.plist` in the project root and add the reversed client ID to the `CFBundleURLSchemes` array (already stubbed in `Resources/Info.plist`).
 
 ## 5. Commit the Xcode project
 
 ```bash
 cd ~/code/myopia-ios
-git add MyopiaCareApp.xcodeproj Package.resolved 2>/dev/null || true
+git add Eyelog.xcodeproj Package.resolved 2>/dev/null || true
 git add .
 git commit -m "chore: add Xcode project + SPM deps"
 git push
@@ -69,14 +84,20 @@ git push
 - **Secrets** for CI (Settings → Secrets and variables → Actions):
   - `APP_STORE_CONNECT_API_KEY` (when you add Fastlane)
 - **Apple Developer portal**:
-  - Create App ID matching your bundle id (e.g. `org.myopiamanage.MyopiaCareApp`).
+  - Create App ID matching your bundle id (e.g. `org.myopiamanage.Eyelog`).
   - Enable **Sign in with Apple** capability on the App ID.
   - Upload a Services ID and private key `.p8` to the VM (path referenced by `APPLE_PRIVATE_KEY_PATH`).
 - **Provider consoles**:
   - [Google Cloud Console](https://console.cloud.google.com/) → OAuth credentials → add an **iOS** client → copy the iOS client ID into both the app's `Info.plist` (`GIDClientID`) and the backend `.env` (`GOOGLE_IOS_CLIENT_ID`).
-  - [Kakao Developers](https://developers.kakao.com/) → create an iOS app → copy **Native app key** into `Info.plist` (`KAKAO_APP_KEY`) and **REST API key** into backend `.env` (`KAKAO_REST_API_KEY`).
-  - [Naver Developers](https://developers.naver.com/) → create a mobile app → copy Client ID / Secret into backend `.env`, URL scheme into `Info.plist`.
+  - [Kakao Developers](https://developers.kakao.com/) → create an iOS app → copy **Native app key** into `Info.plist` (`KAKAO_APP_KEY`). Backend verifies against the user-info endpoint so no Kakao secret is needed server-side.
+  - [Naver Developers](https://developers.naver.com/) → create a mobile app → copy Client ID / Secret and URL scheme into the Info.plist build settings above. Backend verifies via the user-info endpoint.
 
 ## 7. Deploy backend changes
 
-From `~/code/myopia/myopia` (your web repo), copy `~/code/myopia-ios/backend-patches/mobile.ts` into `src/api/mobile.ts`, mount the router as shown in `docs/BACKEND_CHANGES.md`, run the SQL migration, set the new env vars on your Compute Engine VM, and redeploy.
+The backend changes have already been applied under `myopiaBackend/` — see `myopiaBackend/MOBILE_API_SETUP.md` for:
+
+- running `npx prisma migrate deploy` against your dev/prod DB,
+- the env vars that must be added to the VM,
+- the list of `/api/mobile/*` endpoints to smoke-test after deploy.
+
+No new route file needs to be copied from this repo — the reference implementation lives in `myopiaBackend/src/routes/mobile.ts`.
