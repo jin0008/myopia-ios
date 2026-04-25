@@ -66,7 +66,18 @@ private struct ChildRow: View {
     let child: Child
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(child.nickname).font(.headline)
+            HStack(spacing: 8) {
+                Text(child.nickname).font(.headline)
+                if child.source == .web {
+                    Text("children.source.web")
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.accentColor.opacity(0.15))
+                        .foregroundStyle(Color.accentColor)
+                        .clipShape(Capsule())
+                }
+            }
             HStack(spacing: 6) {
                 Text(child.dateOfBirth)
                 Text("·")

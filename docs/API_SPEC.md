@@ -207,6 +207,21 @@ See [`SCREEN_TIME_PLAN.md`](SCREEN_TIME_PLAN.md) for how the samples are derived
 
 ---
 
+## Children — `source` field
+
+Each item in `GET /children` carries a `source` discriminator:
+
+- `"app"` → created via the iOS app (`parent_child_link` row). Editable; can have multiple linked hospitals.
+- `"web"` → created via the regular-user "register child" flow on myopiamanage.org (`user_patient` row). Read-only on iOS; the iOS app may delete the link (which removes the `user_patient` row only) but cannot rename or attach additional hospitals. The iOS app filters out HCP-managed patients that have no `user_patient` link, so only patients that the regular user has explicitly linked themselves to ever appear.
+
+Mirror behavior between the two systems:
+
+- iOS `POST /children/:id/hospital-links` also upserts a `user_patient` row so the same patient becomes visible in myopiamanage.org's regular-user list.
+- iOS `DELETE /children/:id/hospital-links/:hospitalId` removes the matching `child_hospital_link` and (if no other iOS link of the same user references that patient) also drops the `user_patient` mirror.
+- iOS `DELETE /children/:id` for an app-source child removes the `parent_child_link` (cascading the `child_hospital_link` rows) and drops every `user_patient` row that the user owned for those linked patients. Patient rows themselves and all clinical data stay untouched.
+- iOS `DELETE /children/:id` for a web-source child removes only the `user_patient` row.
+- iOS `PATCH /children/:id` returns `400 validation_error` for web-source ids — those have no nickname/DOB to edit on the iOS side.
+
 ## Parent-entered data
 
 Three pieces of data are entered by the parent on the iOS app and

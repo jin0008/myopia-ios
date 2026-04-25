@@ -52,6 +52,8 @@
 "children.loadFail"       = "불러올 수 없습니다";
 "children.retry"          = "다시 시도";
 "children.row.linkedCount" = "연결된 병원 %d곳";
+"children.source.web"      = "웹 등록";
+"children.source.web.help" = "myopiamanage.org에서 등록된 자녀입니다. 별명 수정과 병원 추가는 웹사이트에서만 가능합니다.";
 "children.section.info"   = "아이 정보";
 "child.nickname"          = "별명";
 "child.nicknamePlaceholder" = "별명 (Nickname)";

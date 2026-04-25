@@ -15,11 +15,13 @@ struct LinkedHospitalsSection: View {
             HStack {
                 Text("hospital.linked").font(.headline)
                 Spacer()
-                Button { showAdd = true } label: {
-                    Label {
-                        Text("common.add")
-                    } icon: {
-                        Image(systemName: "plus")
+                if !child.isReadOnly {
+                    Button { showAdd = true } label: {
+                        Label {
+                            Text("common.add")
+                        } icon: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }

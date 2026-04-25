@@ -12,6 +12,19 @@ struct ChildDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
+                if child.source == .web {
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: "globe")
+                            .foregroundStyle(Color.accentColor)
+                        Text("children.source.web.help")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(12)
+                    .background(Color.accentColor.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+                }
                 if lifestyleReminderDue {
                     LifestyleReminderBanner(childId: child.childId)
                         .padding(.horizontal)

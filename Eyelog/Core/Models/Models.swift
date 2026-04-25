@@ -28,14 +28,60 @@ enum Sex: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// Where a `Child` originally came from. The backend reports this as a
+/// string field in the response and we treat unknown values as `.app`
+/// for forward-compatibility.
+enum ChildSource: String, Codable {
+    /// Created via the iOS "add child" flow → `parent_child_link` row.
+    /// The user can edit nickname / DOB / sex and link multiple hospitals.
+    case app
+
+    /// Originated from myopiamanage.org's regular-user "register child"
+    /// flow → `user_patient` row. Read-only on the iOS side; the user
+    /// can delete the link (drops the user_patient row) but cannot
+    /// rename or add additional hospitals.
+    case web
+}
+
 struct Child: Codable, Identifiable {
     let childId: String
+    /// Defaults to `.app` if the backend response omits the field
+    /// (older backends or migration in progress).
+    var source: ChildSource = .app
     var nickname: String
     var dateOfBirth: String   // YYYY-MM-DD from backend
     var sex: Sex
     var linkedHospitals: [LinkedHospital]
 
     var id: String { childId }
+
+    /// True for children that came from the web side. UI should hide
+    /// edit-nickname and add-hospital affordances for these.
+    var isReadOnly: Bool { source == .web }
+
+    private enum CodingKeys: String, CodingKey {
+        case childId, source, nickname, dateOfBirth, sex, linkedHospitals
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.childId         = try c.decode(String.self, forKey: .childId)
+        self.source          = try c.decodeIfPresent(ChildSource.self, forKey: .source) ?? .app
+        self.nickname        = try c.decode(String.self, forKey: .nickname)
+        self.dateOfBirth     = try c.decode(String.self, forKey: .dateOfBirth)
+        self.sex             = try c.decode(Sex.self,    forKey: .sex)
+        self.linkedHospitals = try c.decode([LinkedHospital].self, forKey: .linkedHospitals)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(childId, forKey: .childId)
+        try c.encode(source, forKey: .source)
+        try c.encode(nickname, forKey: .nickname)
+        try c.encode(dateOfBirth, forKey: .dateOfBirth)
+        try c.encode(sex, forKey: .sex)
+        try c.encode(linkedHospitals, forKey: .linkedHospitals)
+    }
 }
 
 struct LinkedHospital: Codable, Identifiable {

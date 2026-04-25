@@ -52,6 +52,8 @@
 "children.loadFail"       = "Couldn't load";
 "children.retry"          = "Retry";
 "children.row.linkedCount" = "%d hospital(s) linked";
+"children.source.web"      = "Web";
+"children.source.web.help" = "Registered on myopiamanage.org. Use the website to rename or add hospitals.";
 "children.section.info"   = "Child info";
 "child.nickname"          = "Nickname";
 "child.nicknamePlaceholder" = "Nickname";
