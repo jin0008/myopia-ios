@@ -22,9 +22,21 @@ struct MainTabView: View {
     var body: some View {
         TabView {
             ChildrenListView()
-                .tabItem { Label("Children", systemImage: "figure.2.and.child.holdinghands") }
+                .tabItem {
+                    Label {
+                        Text("tab.children")
+                    } icon: {
+                        Image(systemName: "figure.2.and.child.holdinghands")
+                    }
+                }
             SettingsView()
-                .tabItem { Label("Settings", systemImage: "gear") }
+                .tabItem {
+                    Label {
+                        Text("tab.settings")
+                    } icon: {
+                        Image(systemName: "gear")
+                    }
+                }
         }
     }
 }

@@ -25,9 +25,9 @@ struct AxialLengthChartView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Axial Length (mm)").font(.headline)
+            Text("axial.title").font(.headline)
             if points.isEmpty {
-                Text("측정 데이터가 없습니다.")
+                Text("axial.empty")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {

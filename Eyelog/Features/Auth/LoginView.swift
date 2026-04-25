@@ -11,58 +11,72 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
+                HStack {
+                    Spacer()
+                    LanguagePill()
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 12)
+
                 Image("BrandLogo")
                     .resizable()
                     .scaledToFit()
                     .frame(height: 64)
-                    .padding(.top, 40)
-                Text("아이로그 · Eyelog")
+                    .padding(.top, 8)
+                Text("brand.full")
                     .font(.title2.bold())
-                Text("부모님 · 보호자를 위한 근시 관리 앱")
+                Text("login.tagline")
                     .foregroundStyle(.secondary)
 
                 Spacer(minLength: 12)
 
-                TextField("아이디", text: $username)
-                    .textContentType(.username)
-                    .textInputAutocapitalization(.never)
-                    .padding().background(.thinMaterial).cornerRadius(10)
-                SecureField("비밀번호", text: $password)
-                    .textContentType(.password)
-                    .padding().background(.thinMaterial).cornerRadius(10)
+                VStack(spacing: 16) {
+                    TextField("login.username", text: $username)
+                        .textContentType(.username)
+                        .textInputAutocapitalization(.never)
+                        .padding().background(.thinMaterial).cornerRadius(10)
+                    SecureField("login.password", text: $password)
+                        .textContentType(.password)
+                        .padding().background(.thinMaterial).cornerRadius(10)
 
-                Button("로그인") { Task { await passwordLogin() } }
+                    Button { Task { await passwordLogin() } } label: {
+                        Text("login.button").frame(maxWidth: .infinity)
+                    }
                     .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
                     .disabled(isWorking)
 
-                Divider().padding(.vertical, 8)
+                    Divider().padding(.vertical, 8)
 
-                SignInWithAppleButton(.signIn,
-                    onRequest: { $0.requestedScopes = [.email, .fullName] },
-                    onCompletion: { result in Task { await handleApple(result) } }
-                )
-                .frame(height: 48)
-                .signInWithAppleButtonStyle(.black)
+                    SignInWithAppleButton(.signIn,
+                        onRequest: { $0.requestedScopes = [.email, .fullName] },
+                        onCompletion: { result in Task { await handleApple(result) } }
+                    )
+                    .frame(height: 48)
+                    .signInWithAppleButtonStyle(.black)
 
-                SocialButton(title: "Google로 계속하기", image: "g.circle.fill") {
-                    Task { await handleGoogle() }
-                }
-                SocialButton(title: "카카오 로그인", image: "bubble.fill", color: .yellow) {
-                    Task { await handleKakao() }
-                }
-                SocialButton(title: "네이버 로그인", image: "n.circle.fill", color: .green) {
-                    Task { await handleNaver() }
-                }
+                    SocialButton(titleKey: "login.google", image: "g.circle.fill") {
+                        Task { await handleGoogle() }
+                    }
+                    SocialButton(titleKey: "login.kakao", image: "bubble.fill", color: .yellow) {
+                        Task { await handleKakao() }
+                    }
+                    SocialButton(titleKey: "login.naver", image: "n.circle.fill", color: .green) {
+                        Task { await handleNaver() }
+                    }
 
-                NavigationLink("회원가입") { SignupView() }
+                    NavigationLink {
+                        SignupView()
+                    } label: {
+                        Text("login.signup")
+                    }
                     .padding(.top, 8)
 
-                if let error { Text(error).foregroundStyle(.red).font(.footnote) }
+                    if let error { Text(error).foregroundStyle(.red).font(.footnote) }
+                }
+                .padding(.horizontal, 24)
 
                 Spacer()
             }
-            .padding(.horizontal, 24)
             .disabled(isWorking)
             .overlay { if isWorking { ProgressView() } }
         }
@@ -123,14 +137,16 @@ struct LoginView: View {
 }
 
 private struct SocialButton: View {
-    let title: String
+    let titleKey: LocalizedStringKey
     let image: String
     var color: Color = .blue
     var action: () -> Void
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(systemName: image); Text(title).fontWeight(.semibold); Spacer()
+                Image(systemName: image)
+                Text(titleKey).fontWeight(.semibold)
+                Spacer()
             }
             .padding()
             .frame(maxWidth: .infinity)

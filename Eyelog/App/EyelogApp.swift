@@ -8,6 +8,7 @@ import NaverThirdPartyLogin
 struct EyelogApp: App {
 
     @StateObject private var session = SessionStore()
+    @StateObject private var localization = LocalizationStore()
 
     init() {
         // Kakao SDK
@@ -24,6 +25,8 @@ struct EyelogApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(session)
+                .environmentObject(localization)
+                .environment(\.locale, localization.locale)
                 .onOpenURL { url in
                     // Route incoming OAuth callbacks to the right SDK
                     if GIDSignIn.sharedInstance.handle(url) { return }

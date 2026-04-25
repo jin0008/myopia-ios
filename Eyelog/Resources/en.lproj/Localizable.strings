@@ -1,0 +1,127 @@
+/* Eyelog — English strings.
+   Keys mirror ko.lproj/Localizable.strings exactly. */
+
+/* ------- Common ------- */
+"common.ok"            = "OK";
+"common.cancel"        = "Cancel";
+"common.save"          = "Save";
+"common.delete"        = "Delete";
+"common.edit"          = "Edit";
+"common.add"           = "Add";
+"common.skip"          = "Skip";
+"common.back"          = "Back";
+"common.loading"       = "Loading";
+"common.error"         = "Error";
+"common.unknown"       = "Unknown";
+"common.required"      = "Required";
+
+/* ------- Brand / language ------- */
+"brand.full"           = "Eyelog";
+"language.system"      = "System language";
+"language.korean"      = "한국어";
+"language.english"     = "English";
+
+/* ------- Login ------- */
+"login.tagline"        = "Myopia tracking for parents and guardians";
+"login.username"       = "Username";
+"login.password"       = "Password";
+"login.button"         = "Log in";
+"login.signup"         = "Sign up";
+"login.divider"        = "or";
+"login.apple"          = "Continue with Apple";
+"login.google"         = "Continue with Google";
+"login.kakao"          = "Continue with Kakao";
+"login.naver"          = "Continue with Naver";
+
+/* ------- Signup ------- */
+"signup.title"         = "Sign up";
+"signup.section.account" = "Account";
+"signup.email"         = "Email";
+"signup.receiveUpdates" = "Receive email updates";
+"signup.button"        = "Create account";
+
+/* ------- Tabs ------- */
+"tab.children"         = "Children";
+"tab.settings"         = "Settings";
+
+/* ------- Children list / Add child ------- */
+"children.title"          = "Children";
+"children.add"            = "Add child";
+"children.empty.title"    = "No children registered yet";
+"children.empty.body"     = "Tap + to register a child.";
+"children.loadFail"       = "Couldn't load";
+"children.retry"          = "Retry";
+"children.row.linkedCount" = "%d hospital(s) linked";
+"children.section.info"   = "Child info";
+"child.nickname"          = "Nickname";
+"child.nicknamePlaceholder" = "Nickname";
+"child.dateOfBirth"       = "Date of birth";
+"child.sex"               = "Sex";
+"child.sex.male"          = "Boy";
+"child.sex.female"        = "Girl";
+
+/* ------- Child detail ------- */
+"child.summary.title"     = "Recent summary";
+"child.summary.measurementCount" = "Measurements";
+"child.measurements.title" = "Measurement history";
+
+/* ------- Axial chart ------- */
+"axial.title"             = "Axial Length (mm)";
+"axial.empty"             = "No measurements yet.";
+
+/* ------- Child detail ------- */
+"child.tab.overview"   = "Overview";
+"child.tab.axial"      = "Axial length";
+"child.tab.refraction" = "Refraction";
+"child.tab.lifestyle"  = "Lifestyle";
+"child.tab.hospitals"  = "Hospitals";
+
+/* ------- Hospitals ------- */
+"hospital.linked"          = "Linked hospitals";
+"hospital.linkAdd"         = "Link a hospital";
+"hospital.empty"           = "No hospitals linked yet. Use the hospital code and registration number to link one.";
+"hospital.code"            = "Hospital code";
+"hospital.regNumber"       = "Registration number";
+"hospital.regNumberSection" = "Registration number (MRN)";
+"hospital.regNumberPlaceholder" = "e.g. 123456";
+"hospital.regNumberLabel"  = "MRN %@";
+"hospital.linkSubmit"      = "Link";
+"hospital.linkNotFound"    = "No matching patient record was found";
+"hospital.section.select"  = "Select a hospital";
+"hospital.searchPlaceholder" = "Search by hospital name or code";
+
+/* ------- Parental refraction ------- */
+"parental.title"             = "Parental refraction";
+"parental.description"       = "Parental refraction is used to estimate the child's myopia risk.";
+"parental.mother"            = "Mother";
+"parental.father"            = "Father";
+"parental.status.myopia"     = "Myopia";
+"parental.status.highMyopia" = "High myopia (≤ −6D)";
+"parental.status.emmetropia" = "Emmetropia";
+"parental.status.hyperopia"  = "Hyperopia";
+"parental.status.unknown"    = "Don't know";
+"parental.save"              = "Save";
+
+/* ------- Lifestyle activity ------- */
+"lifestyle.title"             = "Lifestyle";
+"lifestyle.subtitle"          = "Enter the child's average daily activity over the last 6 months.";
+"lifestyle.nearwork.title"    = "Near-work (books, tablet, phone)";
+"lifestyle.outdoor.title"     = "Outdoor activity";
+"lifestyle.hoursPerDay"       = "Average hours per day";
+"lifestyle.lastEntry"         = "Last entry: %@";
+"lifestyle.noEntry"           = "No entry yet";
+"lifestyle.unchanged"         = "No change";
+"lifestyle.save"              = "Save";
+"lifestyle.reminder.title"    = "Lifestyle update needed";
+"lifestyle.reminder.body"     = "It's been over 6 months since the last entry. Please update if anything has changed.";
+"lifestyle.reminder.update"   = "Update now";
+"lifestyle.reminder.dismiss"  = "Later";
+
+/* ------- Settings ------- */
+"settings.title"            = "Settings";
+"settings.account"          = "Account";
+"settings.language"         = "Language";
+"settings.privacy"          = "Privacy policy";
+"settings.terms"            = "Terms of service";
+"settings.logout"           = "Log out";
+"settings.deleteAccount"    = "Delete account";

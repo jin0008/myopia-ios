@@ -13,20 +13,29 @@ struct LinkedHospitalsSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("연결된 병원").font(.headline)
+                Text("hospital.linked").font(.headline)
                 Spacer()
-                Button { showAdd = true } label: { Label("추가", systemImage: "plus") }
+                Button { showAdd = true } label: {
+                    Label {
+                        Text("common.add")
+                    } icon: {
+                        Image(systemName: "plus")
+                    }
+                }
             }
             if linked.isEmpty {
-                Text("연결된 병원이 없습니다. 병원 코드와 등록번호로 연결하세요.")
+                Text("hospital.empty")
                     .foregroundStyle(.secondary).font(.footnote)
             } else {
                 ForEach(linked) { h in
                     HStack {
                         VStack(alignment: .leading) {
                             Text(h.hospitalName).font(.subheadline.bold())
-                            Text("등록번호 \(h.registrationNumber)")
-                                .font(.caption).foregroundStyle(.secondary)
+                            Text(String(
+                                format: NSLocalizedString("hospital.regNumberLabel", comment: ""),
+                                h.registrationNumber
+                            ))
+                            .font(.caption).foregroundStyle(.secondary)
                         }
                         Spacer()
                         Button(role: .destructive) {
@@ -78,8 +87,8 @@ struct AddHospitalLinkView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("병원 선택") {
-                    TextField("병원 이름 또는 코드 검색", text: $search)
+                Section(header: Text("hospital.section.select")) {
+                    TextField("hospital.searchPlaceholder", text: $search)
                     if let s = selected {
                         HStack { Text(s.name); Spacer(); Text(s.code).foregroundStyle(.secondary) }
                     } else {
@@ -90,18 +99,20 @@ struct AddHospitalLinkView: View {
                         }
                     }
                 }
-                Section("등록번호 (MRN)") {
-                    TextField("예: 123456", text: $mrn)
+                Section(header: Text("hospital.regNumberSection")) {
+                    TextField("hospital.regNumberPlaceholder", text: $mrn)
                         .keyboardType(.asciiCapable)
                         .textInputAutocapitalization(.never)
                 }
                 if let error { Section { Text(error).foregroundStyle(.red) } }
             }
-            .navigationTitle("병원 연결")
+            .navigationTitle("hospital.linkAdd")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("취소") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("common.cancel") }
+                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("연결") { Task { await link() } }
+                    Button { Task { await link() } } label: { Text("hospital.linkSubmit") }
                         .disabled(selected == nil || mrn.isEmpty || working)
                 }
             }

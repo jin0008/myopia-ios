@@ -13,20 +13,26 @@ struct AddChildView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("아이 정보") {
-                    TextField("별명 (Nickname)", text: $nickname)
-                    DatePicker("생년월일", selection: $dob, in: ...Date(), displayedComponents: .date)
-                    Picker("성별", selection: $sex) {
-                        ForEach(Sex.allCases) { Text($0.display).tag($0) }
+                Section(header: Text("children.section.info")) {
+                    TextField("child.nicknamePlaceholder", text: $nickname)
+                    DatePicker("child.dateOfBirth", selection: $dob, in: ...Date(), displayedComponents: .date)
+                    Picker(selection: $sex) {
+                        ForEach(Sex.allCases) {
+                            Text(LocalizedStringKey($0.localizationKey)).tag($0)
+                        }
+                    } label: {
+                        Text("child.sex")
                     }
                 }
                 if let error { Section { Text(error).foregroundStyle(.red) } }
             }
-            .navigationTitle("아이 등록")
+            .navigationTitle("children.add")
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("취소") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: { Text("common.cancel") }
+                }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("저장") { Task { await save() } }
+                    Button { Task { await save() } } label: { Text("common.save") }
                         .disabled(nickname.isEmpty || isWorking)
                 }
             }

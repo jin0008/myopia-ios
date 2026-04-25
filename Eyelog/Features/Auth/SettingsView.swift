@@ -2,27 +2,43 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var session: SessionStore
+    @EnvironmentObject var localization: LocalizationStore
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("계정") {
+                Section(header: Text("settings.account")) {
                     if case .signedIn(let user) = session.state {
-                        LabeledContent("사용자", value: user.username ?? user.email ?? user.id)
-                        LabeledContent("역할", value: user.role)
+                        LabeledContent("settings.account", value: user.username ?? user.email ?? user.id)
                     }
                 }
-                Section("법적 고지") {
-                    Link("이용약관", destination: URL(string: "https://myopiamanage.org/tos")!)
-                    Link("개인정보처리방침", destination: URL(string: "https://myopiamanage.org/privacy")!)
+
+                Section(header: Text("settings.language")) {
+                    Picker(selection: $localization.selection) {
+                        ForEach(LocalizationStore.Selection.allCases) { sel in
+                            Text(sel.displayName).tag(sel)
+                        }
+                    } label: {
+                        Text("settings.language")
+                    }
+                    .pickerStyle(.inline)
+                    .labelsHidden()
                 }
+
                 Section {
-                    Button("로그아웃", role: .destructive) {
+                    Link("settings.terms", destination: URL(string: "https://myopiamanage.org/tos")!)
+                    Link("settings.privacy", destination: URL(string: "https://myopiamanage.org/privacy")!)
+                }
+
+                Section {
+                    Button(role: .destructive) {
                         Task { await session.signOut() }
+                    } label: {
+                        Text("settings.logout")
                     }
                 }
             }
-            .navigationTitle("설정")
+            .navigationTitle("settings.title")
         }
     }
 }

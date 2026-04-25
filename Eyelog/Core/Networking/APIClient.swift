@@ -125,7 +125,7 @@ actor APIClient {
 // MARK: - Endpoint
 
 struct Endpoint {
-    enum Method: String { case GET, POST, PATCH, DELETE }
+    enum Method: String { case GET, POST, PUT, PATCH, DELETE }
     let path: String
     let method: Method
     let query: [(key: String, value: String)]?

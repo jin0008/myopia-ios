@@ -21,7 +21,11 @@ struct AuthResponse: Codable {
 enum Sex: String, Codable, CaseIterable, Identifiable {
     case male, female
     var id: String { rawValue }
-    var display: String { self == .male ? "남아" : "여아" }
+    /// Localization key — use `Text(LocalizedStringKey(sex.localizationKey))`
+    /// or `LocalizationStore.shared.string(sex.localizationKey)` to render.
+    var localizationKey: String {
+        self == .male ? "child.sex.male" : "child.sex.female"
+    }
 }
 
 struct Child: Codable, Identifiable {
@@ -78,6 +82,62 @@ struct ChildSummary: Codable {
     }
 }
 
+// MARK: - Parental refraction
+
+enum MyopiaStatus: String, Codable, CaseIterable, Identifiable {
+    case myopia
+    case high_myopia
+    case emmetropia
+    case hyperopia
+    case unknown
+
+    var id: String { rawValue }
+
+    /// Localization-key for the picker label.
+    var localizationKey: String {
+        switch self {
+        case .myopia:      return "parental.status.myopia"
+        case .high_myopia: return "parental.status.highMyopia"
+        case .emmetropia:  return "parental.status.emmetropia"
+        case .hyperopia:   return "parental.status.hyperopia"
+        case .unknown:     return "parental.status.unknown"
+        }
+    }
+}
+
+struct ParentalMyopiaResponse: Codable {
+    let mother: ParentalMyopiaEntry?
+    let father: ParentalMyopiaEntry?
+
+    struct ParentalMyopiaEntry: Codable {
+        let status: MyopiaStatus
+        let recordedAt: Date
+    }
+}
+
+// MARK: - Lifestyle activity
+
+struct LifestyleEntry: Codable, Identifiable {
+    let id: String
+    let hours: Int?
+    let recordedAt: Date
+}
+
+struct LifestyleEntries: Codable {
+    let entries: [LifestyleEntry]
+}
+
+struct LifestyleReminder: Codable {
+    let dueForUpdate: Bool
+    let nearwork: LatestActivity?
+    let outdoor: LatestActivity?
+
+    struct LatestActivity: Codable {
+        let hours: Int?
+        let recordedAt: Date
+    }
+}
+
 // MARK: - Endpoint factories
 
 extension Endpoint {
@@ -110,5 +170,82 @@ extension Endpoint {
     }
     static func deleteChild(_ id: String) -> Endpoint {
         Endpoint(path: "children/\(id)", method: .DELETE)
+    }
+
+    // MARK: Parental refraction
+    static func parentalMyopia(childId: String) -> Endpoint {
+        Endpoint(path: "children/\(childId)/parental-myopia")
+    }
+    static func updateParentalMyopia(
+        childId: String,
+        mother: MyopiaStatus?,
+        father: MyopiaStatus?,
+        clearMother: Bool,
+        clearFather: Bool
+    ) -> Endpoint {
+        // Encode "skip this parent" by *omitting* the key, "clear this
+        // parent" by sending `null`, and "set" by sending `{ status }`.
+        struct Body: Encodable {
+            let mother: Wrapped?
+            let father: Wrapped?
+            struct Wrapped: Encodable { let status: String }
+
+            enum CodingKeys: String, CodingKey { case mother, father }
+
+            // Custom encoder: include nil only if the caller asked us to
+            // explicitly clear; otherwise omit the field.
+            let includeMother: Bool
+            let includeFather: Bool
+
+            func encode(to encoder: Encoder) throws {
+                var c = encoder.container(keyedBy: CodingKeys.self)
+                if includeMother {
+                    if let mother { try c.encode(mother, forKey: .mother) }
+                    else { try c.encodeNil(forKey: .mother) }
+                }
+                if includeFather {
+                    if let father { try c.encode(father, forKey: .father) }
+                    else { try c.encodeNil(forKey: .father) }
+                }
+            }
+        }
+        let body = Body(
+            mother: mother.map { .init(status: $0.rawValue) },
+            father: father.map { .init(status: $0.rawValue) },
+            includeMother: mother != nil || clearMother,
+            includeFather: father != nil || clearFather
+        )
+        return Endpoint(
+            path: "children/\(childId)/parental-myopia",
+            method: .PUT,
+            body: body
+        )
+    }
+
+    // MARK: Lifestyle
+    static func nearworkActivity(childId: String) -> Endpoint {
+        Endpoint(path: "children/\(childId)/nearwork-activity")
+    }
+    static func outdoorActivity(childId: String) -> Endpoint {
+        Endpoint(path: "children/\(childId)/outdoor-activity")
+    }
+    static func addNearwork(childId: String, hours: Int) -> Endpoint {
+        struct Body: Encodable { let hours: Int }
+        return Endpoint(
+            path: "children/\(childId)/nearwork-activity",
+            method: .POST,
+            body: Body(hours: hours)
+        )
+    }
+    static func addOutdoor(childId: String, hours: Int) -> Endpoint {
+        struct Body: Encodable { let hours: Int }
+        return Endpoint(
+            path: "children/\(childId)/outdoor-activity",
+            method: .POST,
+            body: Body(hours: hours)
+        )
+    }
+    static func lifestyleReminder(childId: String) -> Endpoint {
+        Endpoint(path: "children/\(childId)/lifestyle-reminder")
     }
 }

@@ -207,6 +207,57 @@ See [`SCREEN_TIME_PLAN.md`](SCREEN_TIME_PLAN.md) for how the samples are derived
 
 ---
 
+## Parent-entered data
+
+Three pieces of data are entered by the parent on the iOS app and
+fanned out to every linked patient record so each hospital sees the
+same value on the web side.
+
+### `GET /children/:childId/parental-myopia` *(auth)*
+Returns the latest parental-refraction state for each parent.
+```json
+{
+  "mother": { "status": "myopia",     "recordedAt": "2026-04-25T10:00:00Z" },
+  "father": { "status": "emmetropia", "recordedAt": "2026-04-25T10:00:00Z" }
+}
+```
+`status` is one of `myopia | high_myopia | emmetropia | hyperopia | unknown`. Either parent may be `null` if no row has been entered yet.
+
+### `PUT /children/:childId/parental-myopia` *(auth)*
+Update one or both parents. Omit a key to leave it untouched, send `null` to clear, send `{ "status": "..." }` to set.
+```json
+{ "mother": { "status": "high_myopia" }, "father": null }
+```
+Server deletes existing rows for `(patient_id, parent_sex)` on every linked patient and inserts a fresh row when a status was provided.
+
+### `GET /children/:childId/nearwork-activity` *(auth)*
+Returns the timeline (deduped across linked hospitals).
+```json
+{ "entries": [{ "id": "uuid", "hours": 4, "recordedAt": "2026-04-25T..." }] }
+```
+Same shape for **`GET /children/:childId/outdoor-activity`**.
+
+### `POST /children/:childId/nearwork-activity` *(auth)*
+Append a new timeline entry, fanned out to every linked patient.
+```json
+{ "hours": 4, "recordedAt": "2026-04-25T10:00:00Z" }
+```
+`recordedAt` is optional (defaults to `now()`). `hours` is an integer 0–24.
+Same shape for **`POST /children/:childId/outdoor-activity`**.
+
+### `GET /children/:childId/lifestyle-reminder` *(auth)*
+Used by the iOS reminder banner to decide whether to nag the parent.
+```json
+{
+  "dueForUpdate": true,
+  "nearwork": { "hours": 4, "recordedAt": "2025-09-25T..." },
+  "outdoor":  { "hours": 1, "recordedAt": "2025-09-25T..." }
+}
+```
+`dueForUpdate` is `true` when either the latest near-work or the latest outdoor entry is more than 6 months old (or missing).
+
+---
+
 ## Error format
 
 Non-2xx responses always return

@@ -11,22 +11,24 @@ struct SignupView: View {
 
     var body: some View {
         Form {
-            Section("계정") {
-                TextField("아이디", text: $username)
+            Section(header: Text("signup.section.account")) {
+                TextField("login.username", text: $username)
                     .textInputAutocapitalization(.never)
-                SecureField("비밀번호", text: $password)
-                TextField("이메일", text: $email)
+                SecureField("login.password", text: $password)
+                TextField("signup.email", text: $email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
-                Toggle("이메일 업데이트 수신", isOn: $receiveUpdates)
+                Toggle("signup.receiveUpdates", isOn: $receiveUpdates)
             }
             Section {
-                Button("가입하기") { Task { await submit() } }
-                    .disabled(isWorking || username.isEmpty || password.isEmpty)
+                Button { Task { await submit() } } label: {
+                    Text("signup.button")
+                }
+                .disabled(isWorking || username.isEmpty || password.isEmpty)
                 if let error { Text(error).foregroundStyle(.red) }
             }
         }
-        .navigationTitle("회원가입")
+        .navigationTitle("signup.title")
     }
 
     private func submit() async {

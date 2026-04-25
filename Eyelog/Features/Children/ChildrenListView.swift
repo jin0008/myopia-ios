@@ -13,15 +13,21 @@ struct ChildrenListView: View {
                     ProgressView()
                 } else if let error {
                     VStack(spacing: 8) {
-                        Text("불러올 수 없습니다").font(.headline)
+                        Text("children.loadFail").font(.headline)
                         Text(error).font(.caption).foregroundStyle(.secondary)
-                        Button("다시 시도") { Task { await load() } }
+                        Button { Task { await load() } } label: {
+                            Text("children.retry")
+                        }
                     }
                 } else if children.isEmpty {
                     ContentUnavailableView {
-                        Label("등록된 아이가 없습니다", systemImage: "figure.2.and.child.holdinghands")
+                        Label {
+                            Text("children.empty.title")
+                        } icon: {
+                            Image(systemName: "figure.2.and.child.holdinghands")
+                        }
                     } description: {
-                        Text("+ 버튼을 눌러 아이를 등록하세요.")
+                        Text("children.empty.body")
                     }
                 } else {
                     List(children) { child in
@@ -33,7 +39,7 @@ struct ChildrenListView: View {
                     .refreshable { await load() }
                 }
             }
-            .navigationTitle("아이 목록")
+            .navigationTitle("children.title")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button { showAdd = true } label: { Image(systemName: "plus") }
@@ -61,9 +67,18 @@ private struct ChildRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(child.nickname).font(.headline)
-            Text("\(child.dateOfBirth) · \(child.sex.display) · 연결된 병원 \(child.linkedHospitals.count)곳")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 6) {
+                Text(child.dateOfBirth)
+                Text("·")
+                Text(LocalizedStringKey(child.sex.localizationKey))
+                Text("·")
+                Text(String(
+                    format: NSLocalizedString("children.row.linkedCount", comment: ""),
+                    child.linkedHospitals.count
+                ))
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
         .padding(.vertical, 4)
     }
