@@ -1,4 +1,4 @@
-/* Eyelog — English strings.
+/* EAGLE vision (수리수리) — English strings.
    Keys mirror ko.lproj/Localizable.strings exactly. */
 
 /* ------- Common ------- */
@@ -16,7 +16,8 @@
 "common.required"      = "Required";
 
 /* ------- Brand / language ------- */
-"brand.full"           = "Eyelog";
+"brand.full"           = "EAGLE vision";
+"brand.short"          = "EAGLE vision";
 "language.system"      = "System language";
 "language.korean"      = "한국어";
 "language.english"     = "English";
@@ -42,6 +43,7 @@
 
 /* ------- Tabs ------- */
 "tab.children"         = "Children";
+"tab.community"        = "Community";
 "tab.settings"         = "Settings";
 
 /* ------- Children list / Add child ------- */
@@ -118,6 +120,30 @@
 "lifestyle.reminder.body"     = "It's been over 6 months since the last entry. Please update if anything has changed.";
 "lifestyle.reminder.update"   = "Update now";
 "lifestyle.reminder.dismiss"  = "Later";
+
+/* ------- Community board ------- */
+"community.title"              = "Community";
+"community.compose"            = "New post";
+"community.post"               = "Post";
+"community.anonymous"          = "anonymous";
+"community.reply"              = "Reply";
+"community.empty.title"        = "No posts yet";
+"community.empty.body"         = "Tap ✏️ in the top-right corner to write the first one.";
+"community.loadFail"           = "Couldn't load the board";
+"community.comments.title %lld" = "Comments (%lld)";
+"community.comments.empty"     = "No comments yet.";
+"community.comment.deleted"    = "(deleted comment)";
+"community.compose.commentPlaceholder" = "Write a comment";
+"community.compose.newPost"    = "New post";
+"community.compose.editPost"   = "Edit post";
+"community.compose.comment"    = "Comment";
+"community.compose.reply"      = "Reply";
+"community.compose.submitPost"    = "Post";
+"community.compose.submitComment" = "Send";
+"community.compose.titleLabel"     = "Title";
+"community.compose.titlePlaceholder" = "Enter a title";
+"community.compose.bodyLabel"      = "Body";
+"community.reply.toLabel %@"   = "Reply to %@";
 
 /* ------- Settings ------- */
 "settings.title"            = "Settings";

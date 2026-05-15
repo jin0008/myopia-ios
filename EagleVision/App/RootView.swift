@@ -29,6 +29,14 @@ struct MainTabView: View {
                         Image(systemName: "figure.2.and.child.holdinghands")
                     }
                 }
+            CommunityListView()
+                .tabItem {
+                    Label {
+                        Text("tab.community")
+                    } icon: {
+                        Image(systemName: "bubble.left.and.bubble.right")
+                    }
+                }
             SettingsView()
                 .tabItem {
                     Label {

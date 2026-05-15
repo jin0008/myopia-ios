@@ -5,7 +5,7 @@ import KakaoSDKAuth
 import NaverThirdPartyLogin
 
 @main
-struct EyelogApp: App {
+struct EagleVisionApp: App {
 
     @StateObject private var session = SessionStore()
     @StateObject private var localization = LocalizationStore()

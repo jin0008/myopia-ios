@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Eyelog — iOS Info.plist template.
+  수리수리 (EAGLE vision) — iOS Info.plist template.
 
   NOTE: Xcode 13+ projects typically auto-generate Info.plist entries from
   build settings. When you create the Xcode project, either:
@@ -11,10 +11,10 @@
 
   Replace the ${PLACEHOLDER} values before the first build:
 
-    ${PRODUCT_BUNDLE_IDENTIFIER}  →  com.yourcompany.Eyelog
+    ${PRODUCT_BUNDLE_IDENTIFIER}  →  com.yourcompany.EagleVision
     ${GOOGLE_REVERSED_CLIENT_ID}  →  com.googleusercontent.apps.<id>
     ${KAKAO_APP_KEY}              →  kakao<native-app-key>
-    ${NAVER_URL_SCHEME}           →  e.g. naverlogineyelog
+    ${NAVER_URL_SCHEME}           →  e.g. naverlogineaglevision
 
   Also drop the matching keys in the target's .xcconfig:
     KAKAO_APP_KEY = <native-app-key>      (no "kakao" prefix here)
@@ -25,11 +25,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- Names shown in the Home Screen / Settings app -->
+    <!-- Names shown in the Home Screen / Settings app.
+         CFBundleDisplayName is what appears beneath the icon on the Home
+         Screen; we use the Korean brand name "수리수리" there. CFBundleName
+         is the shorter identity used by the OS internally. -->
     <key>CFBundleName</key>
-    <string>Eyelog</string>
+    <string>EAGLE vision</string>
     <key>CFBundleDisplayName</key>
-    <string>Eyelog</string>
+    <string>수리수리</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>

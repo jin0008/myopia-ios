@@ -1,5 +1,8 @@
 /**
- * Mobile API router for myopiamanage.org — drop this into
+ * (Reference scaffold only — the production version lives in
+ * `myopiaBackend/src/routes/mobile.ts`. Kept here for historical context.)
+ *
+ * Mobile API router for myopiamanage.org (수리수리 · EAGLE vision iOS) — drop this into
  *   src/api/mobile.ts
  * of the web project and mount it in your Express app entry with:
  *

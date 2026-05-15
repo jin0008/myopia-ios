@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-/// Eyelog ships in Korean by default but the user can override the
+/// 수리수리 (EAGLE vision) ships in Korean by default but the user can override the
 /// language at any time via the toggle on the login screen or the
 /// Settings tab. This object is the single source of truth for the
 /// in-app language preference.
@@ -50,7 +50,7 @@ final class LocalizationStore: ObservableObject {
 
     @Published private(set) var locale: Locale = .current
 
-    private static let storageKey = "eyelog.language.selection"
+    private static let storageKey = "eaglevision.language.selection"
 
     init() {
         let raw = UserDefaults.standard.string(forKey: Self.storageKey) ?? Selection.system.rawValue

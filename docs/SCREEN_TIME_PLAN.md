@@ -13,7 +13,7 @@ Both require the **Family Controls entitlement**, which you must request from Ap
 ┌────────────────────┐                 ┌────────────────────┐
 │ Child iPhone       │                 │ Parent iPhone      │
 │ ─────────────      │                 │ ─────────────      │
-│ Eyelog      │  Family Sharing │ Eyelog      │
+│ EAGLE vision│  Family Sharing │ EAGLE vision│
 │ + DeviceActivity   │ ◄─────────────► │ (reads aggregated  │
 │   extension        │                 │  Near-work minutes)│
 │                    │                 │                    │

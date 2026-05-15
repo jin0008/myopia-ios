@@ -5,7 +5,8 @@
 ```
                 ┌───────────────────────────────┐
                 │       iPhone (iOS 17+)        │
-                │  Eyelog / 아이로그 (SwiftUI)   │
+                │  수리수리 · EAGLE vision        │
+                │  (SwiftUI)                     │
                 │                               │
                 │  ┌─────────────────────────┐  │
                 │  │ Auth providers          │  │
@@ -29,7 +30,7 @@
    │  ┌─────────────────────────────────────────────┐    │
    │  │   Node/Express/Prisma server (existing)     │    │
    │  │   /api/*     ← web routes (unchanged)       │    │
-   │  │   /api/mobile/*  ← routes for Eyelog iOS    │    │
+   │  │   /api/mobile/*  ← routes for EAGLE vision  │    │
    │  └──────────────┬──────────────────────────────┘    │
    │                 │                                   │
    │  ┌──────────────▼──────────────┐                    │
@@ -54,7 +55,7 @@
 
 ### Why a separate `parent_child_link` concept?
 
-The existing `user` table with role `normal_user` already represents a parent who has logged in on the web. The iOS (Eyelog) app deliberately narrows what a logged-in parent can do: they can only manage **children** (never themselves as patient), and only view clinical data by **linking** to records that clinicians already entered on the web.
+The existing `user` table with role `normal_user` already represents a parent who has logged in on the web. The iOS (EAGLE vision) app deliberately narrows what a logged-in parent can do: they can only manage **children** (never themselves as patient), and only view clinical data by **linking** to records that clinicians already entered on the web.
 
 We reuse `user` with `role='normal_user'` and introduce a `parent_child_link` table that stores the child profile (nickname / DOB / sex) without touching any hospital data. Linking to a hospital is a separate step that inserts a row in `child_hospital_link` referencing the existing `patient` row. No change to the existing `user` schema.
 
@@ -129,7 +130,7 @@ Single `APIClient` (actor) with:
 - JSON date decoding with ISO-8601
 - Typed errors: `.unauthorized`, `.network`, `.server(code, message)`, `.decoding`
 
-See [`Eyelog/Core/Networking/APIClient.swift`](../Eyelog/Core/Networking/APIClient.swift).
+See [`EagleVision/Core/Networking/APIClient.swift`](../EagleVision/Core/Networking/APIClient.swift).
 
 ## 6. Data storage on device
 

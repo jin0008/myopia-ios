@@ -184,6 +184,72 @@ struct LifestyleReminder: Codable {
     }
 }
 
+// MARK: - Community board (자유게시판)
+
+struct CommunityAuthor: Codable, Equatable, Hashable {
+    let id: String
+    let username: String?
+    let isMe: Bool
+}
+
+/// Used by the list endpoint — `body` is a server-truncated preview.
+struct CommunityPostSummary: Codable, Identifiable, Equatable {
+    let id: String
+    let title: String
+    let bodyPreview: String
+    let author: CommunityAuthor
+    let createdAt: Date
+    let updatedAt: Date
+    let commentCount: Int
+    let likeCount: Int
+    let likedByMe: Bool
+}
+
+struct CommunityPostListResponse: Codable {
+    let posts: [CommunityPostSummary]
+    let nextCursor: String?
+}
+
+/// Full post payload returned by the detail endpoint. Note `body`
+/// rather than `bodyPreview` — same fields otherwise.
+struct CommunityPostDetail: Codable, Identifiable, Equatable {
+    let id: String
+    let title: String
+    let body: String
+    let author: CommunityAuthor
+    let createdAt: Date
+    let updatedAt: Date
+    let commentCount: Int
+    let likeCount: Int
+    let likedByMe: Bool
+}
+
+struct CommunityComment: Codable, Identifiable, Equatable {
+    let id: String
+    let postId: String
+    /// Non-nil → this is a reply to that comment. `nil` → top-level
+    /// comment. The server flattens reply depth to one level.
+    let parentCommentId: String?
+    /// `nil` when the comment has been soft-deleted (`deleted == true`).
+    /// The UI shows a "(deleted)" placeholder in that case.
+    let body: String?
+    let deleted: Bool
+    let author: CommunityAuthor
+    let createdAt: Date
+    let updatedAt: Date
+    let likeCount: Int
+    let likedByMe: Bool
+}
+
+struct CommunityCommentListResponse: Codable {
+    let comments: [CommunityComment]
+}
+
+struct CommunityLikeResponse: Codable {
+    let liked: Bool
+    let likeCount: Int
+}
+
 // MARK: - Endpoint factories
 
 extension Endpoint {
@@ -293,5 +359,83 @@ extension Endpoint {
     }
     static func lifestyleReminder(childId: String) -> Endpoint {
         Endpoint(path: "children/\(childId)/lifestyle-reminder")
+    }
+
+    // MARK: Community board
+
+    static func communityPosts(cursor: String? = nil, pageSize: Int = 20) -> Endpoint {
+        var q: [(String, String)] = [("pageSize", String(pageSize))]
+        if let cursor { q.append(("cursor", cursor)) }
+        return Endpoint(path: "community/posts", query: q)
+    }
+
+    static func createCommunityPost(title: String, body: String) -> Endpoint {
+        struct Body: Encodable { let title: String; let body: String }
+        return Endpoint(path: "community/posts", method: .POST,
+                        body: Body(title: title, body: body))
+    }
+
+    static func communityPost(_ id: String) -> Endpoint {
+        Endpoint(path: "community/posts/\(id)")
+    }
+
+    static func updateCommunityPost(_ id: String, title: String?, body: String?) -> Endpoint {
+        struct Body: Encodable {
+            let title: String?
+            let body: String?
+            enum CodingKeys: String, CodingKey { case title, body }
+            func encode(to encoder: Encoder) throws {
+                var c = encoder.container(keyedBy: CodingKeys.self)
+                if let title { try c.encode(title, forKey: .title) }
+                if let body { try c.encode(body, forKey: .body) }
+            }
+        }
+        return Endpoint(path: "community/posts/\(id)", method: .PATCH,
+                        body: Body(title: title, body: body))
+    }
+
+    static func deleteCommunityPost(_ id: String) -> Endpoint {
+        Endpoint(path: "community/posts/\(id)", method: .DELETE)
+    }
+
+    static func communityComments(postId: String) -> Endpoint {
+        Endpoint(path: "community/posts/\(postId)/comments")
+    }
+
+    static func createCommunityComment(postId: String,
+                                       body: String,
+                                       parentCommentId: String? = nil) -> Endpoint {
+        struct Body: Encodable {
+            let body: String
+            let parentCommentId: String?
+            enum CodingKeys: String, CodingKey { case body, parentCommentId }
+            func encode(to encoder: Encoder) throws {
+                var c = encoder.container(keyedBy: CodingKeys.self)
+                try c.encode(body, forKey: .body)
+                if let parentCommentId {
+                    try c.encode(parentCommentId, forKey: .parentCommentId)
+                }
+            }
+        }
+        return Endpoint(path: "community/posts/\(postId)/comments",
+                        method: .POST,
+                        body: Body(body: body, parentCommentId: parentCommentId))
+    }
+
+    static func deleteCommunityComment(_ id: String) -> Endpoint {
+        Endpoint(path: "community/comments/\(id)", method: .DELETE)
+    }
+
+    static func likeCommunityPost(_ id: String) -> Endpoint {
+        Endpoint(path: "community/posts/\(id)/like", method: .POST)
+    }
+    static func unlikeCommunityPost(_ id: String) -> Endpoint {
+        Endpoint(path: "community/posts/\(id)/like", method: .DELETE)
+    }
+    static func likeCommunityComment(_ id: String) -> Endpoint {
+        Endpoint(path: "community/comments/\(id)/like", method: .POST)
+    }
+    static func unlikeCommunityComment(_ id: String) -> Endpoint {
+        Endpoint(path: "community/comments/\(id)/like", method: .DELETE)
     }
 }
