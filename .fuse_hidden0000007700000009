@@ -1,12 +1,12 @@
-# 마이오닥 (MyoDoc) — iOS
+# 수리수리 (MyoDoc) — iOS
 
-> Naming history: originally working-titled *Eyelog (아이로그)* (dropped — already a registered trademark), then briefly *수리수리 / EAGLE vision*. The app now ships as **마이오닥** (Korean display name) / **MyoDoc** (English display name).
+> Renamed from the original working title *Eyelog (아이로그)* — the prior name was already registered as a trademark, so the app now ships as **수리수리** (Korean display name) / **MyoDoc** (English display name).
 
 An iPhone app for parents/guardians to monitor their children's **axial length (AL)** measurements collected at myopia-management clinics registered on [myopiamanage.org](https://myopiamanage.org), with a built-in **community board (자유게시판)** so parents using the service can share advice and questions with each other.
 
 The axial-length viewer side of the app is **read-only**: all clinical data is pulled from the existing myopiamanage.org PostgreSQL database via mobile-specific API endpoints under `/api/mobile/*`. Parents cannot enter measurement data themselves — only clinicians who operate on the web do. The community board is **read-write** for any signed-in app user.
 
-> **Branding:** Korean display name **마이오닥**, English display name **MyoDoc**. The brand-blue palette (`#0d47a1`) and logo lockups match the web site at myopiamanage.org. Source SVGs live in `MyoDoc/Resources/` and are referenced from `Assets.xcassets` as `BrandLogo`, `BrandLogoEnglish`, and `BrandMark`.
+> **Branding:** Korean display name **수리수리**, English display name **MyoDoc**. The brand-blue palette (`#0d47a1`) and logo lockups match the web site at myopiamanage.org. Source SVGs live in `MyoDoc/Resources/` and are referenced from `Assets.xcassets` as `BrandLogo`, `BrandLogoEnglish`, and `BrandMark`.
 
 > **Status:** Scaffold / specification repo. No production build yet.
 
@@ -84,7 +84,7 @@ myopia-ios/
 
 1. **Create the Xcode project shell**
    Open Xcode → **File → New → Project → iOS → App**.
-   - Product name: **MyoDoc** (not "마이오닥" — Xcode wants an ASCII identifier; the Korean display name is set via `CFBundleDisplayName`)
+   - Product name: **MyoDoc** (not "수리수리" — Xcode wants an ASCII identifier; the Korean display name is set via `CFBundleDisplayName`)
    - Interface: SwiftUI · Language: Swift · Minimum iOS: 17.0
    - Organization identifier: e.g. `org.myopiamanage`
 2. **Point the project at this folder's sources.** Delete the auto-generated `ContentView.swift` and the `MyoDocApp.swift` Xcode creates, then drag the files under `MyoDoc/` into the project (Create groups, add to the `MyoDoc` target). Make sure `Assets.xcassets` is in the target's "Copy Bundle Resources" phase.

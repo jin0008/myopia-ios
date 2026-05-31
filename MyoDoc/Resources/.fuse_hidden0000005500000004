@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  수리수리 (MyoDoc) — iOS Info.plist template.
+
+  NOTE: Xcode 13+ projects typically auto-generate Info.plist entries from
+  build settings. When you create the Xcode project, either:
+    (a) Let Xcode generate Info.plist and copy the individual keys below
+        into the target's Info tab, or
+    (b) Set GENERATE_INFOPLIST_FILE = NO and point INFOPLIST_FILE at this
+        file.
+
+  Replace the ${PLACEHOLDER} values before the first build:
+
+    ${PRODUCT_BUNDLE_IDENTIFIER}  →  com.yourcompany.MyoDoc
+    ${GOOGLE_REVERSED_CLIENT_ID}  →  com.googleusercontent.apps.<id>
+    ${KAKAO_APP_KEY}              →  kakao<native-app-key>
+    ${NAVER_URL_SCHEME}           →  e.g. naverloginmyodoc
+
+  Also drop the matching keys in the target's .xcconfig:
+    KAKAO_APP_KEY = <native-app-key>      (no "kakao" prefix here)
+    NAVER_CONSUMER_KEY = <consumer-key>
+    NAVER_CONSUMER_SECRET = <consumer-secret>
+    API_BASE_URL = https://api.myopiamanage.org
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Names shown in the Home Screen / Settings app.
+         CFBundleDisplayName is what appears beneath the icon on the Home
+         Screen; we use the Korean brand name "수리수리" there. CFBundleName
+         is the shorter identity used by the OS internally. -->
+    <key>CFBundleName</key>
+    <string>MyoDoc</string>
+    <key>CFBundleDisplayName</key>
+    <string>수리수리</string>
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+
+    <!-- Localization: Korean primary, English fallback -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>ko</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>ko</string>
+        <string>en</string>
+    </array>
+
+    <!-- App icon / launch screen -->
+    <key>UILaunchScreen</key>
+    <dict>
+        <key>UIColorName</key>
+        <string>AccentColor</string>
+        <key>UIImageName</key>
+        <string>BrandLogo</string>
+        <key>UIImageRespectsSafeAreaInsets</key>
+        <true/>
+    </dict>
+
+    <!-- Supported interface orientations -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Scene manifest (SwiftUI App lifecycle) -->
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <false/>
+    </dict>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+
+    <!-- URL schemes for Apple / Google / Kakao / Naver OAuth callbacks.
+         The SDKs inspect these; make sure every scheme below is also
+         registered with the provider console. -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <!-- Google Sign-In: reversed client ID from GoogleService-Info.plist -->
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>google</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>${GOOGLE_REVERSED_CLIENT_ID}</string>
+            </array>
+        </dict>
+        <!-- Kakao: "kakao" + native-app-key (no dots, all lowercase) -->
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>kakao</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>kakao${KAKAO_APP_KEY}</string>
+            </array>
+        </dict>
+        <!-- Naver: any unique scheme; must match the Naver console -->
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>naver</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>${NAVER_URL_SCHEME}</string>
+            </array>
+        </dict>
+    </array>
+
+    <!-- Apps we need to open / detect (Kakao/Naver app-switch login) -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>kakaokompassauth</string>
+        <string>kakaolink</string>
+        <string>kakaotalk</string>
+        <string>kakaoplus</string>
+        <string>naversearchapp</string>
+        <string>naversearchthirdlogin</string>
+    </array>
+
+    <!-- App Transport Security: keep HTTPS-only; no arbitrary loads.
+         Add per-domain exceptions here only if you must proxy legacy
+         HTTP endpoints in development. -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+    </dict>
+
+    <!-- Bundle-level config read by Swift code (Bundle.main.object…) -->
+    <key>KAKAO_APP_KEY</key>
+    <string>$(KAKAO_APP_KEY)</string>
+    <key>NAVER_CONSUMER_KEY</key>
+    <string>$(NAVER_CONSUMER_KEY)</string>
+    <key>NAVER_CONSUMER_SECRET</key>
+    <string>$(NAVER_CONSUMER_SECRET)</string>
+    <key>API_BASE_URL</key>
+    <string>$(API_BASE_URL)</string>
+
+    <!-- Privacy usage strings (required by App Store Connect for any
+         privacy-sensitive capability that the app might ever touch).
+         Keep them even if the feature isn't wired up yet — removing them
+         later is trivial, forgetting to add one blocks the review. -->
+    <key>NSUserTrackingUsageDescription</key>
+    <string>이 앱은 사용자 추적을 하지 않습니다. 서비스 품질 개선을 위해서만 사용됩니다.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>처방전 또는 의료 서류를 스캔하여 업로드하기 위해 카메라를 사용합니다.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>처방전 또는 의료 서류 사진을 첨부하기 위해 사진 라이브러리에 접근합니다.</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>앱 로그인 보호를 위해 Face ID를 사용합니다.</string>
+
+    <!-- Misc -->
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>arm64</string>
+    </array>
+    <key>UIStatusBarStyle</key>
+    <string>UIStatusBarStyleDefault</string>
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+</dict>
+</plist>

@@ -1,12 +1,12 @@
-# 마이오닥 (MyoDoc) — iOS
+# 수리수리 (EAGLE vision) — iOS
 
-> Naming history: originally working-titled *Eyelog (아이로그)* (dropped — already a registered trademark), then briefly *수리수리 / EAGLE vision*. The app now ships as **마이오닥** (Korean display name) / **MyoDoc** (English display name).
+> Renamed from the original working title *Eyelog (아이로그)* — the prior name was already registered as a trademark, so the app now ships as **수리수리** (Korean display name) / **EAGLE vision** (English display name).
 
 An iPhone app for parents/guardians to monitor their children's **axial length (AL)** measurements collected at myopia-management clinics registered on [myopiamanage.org](https://myopiamanage.org), with a built-in **community board (자유게시판)** so parents using the service can share advice and questions with each other.
 
 The axial-length viewer side of the app is **read-only**: all clinical data is pulled from the existing myopiamanage.org PostgreSQL database via mobile-specific API endpoints under `/api/mobile/*`. Parents cannot enter measurement data themselves — only clinicians who operate on the web do. The community board is **read-write** for any signed-in app user.
 
-> **Branding:** Korean display name **마이오닥**, English display name **MyoDoc**. The brand-blue palette (`#0d47a1`) and logo lockups match the web site at myopiamanage.org. Source SVGs live in `MyoDoc/Resources/` and are referenced from `Assets.xcassets` as `BrandLogo`, `BrandLogoEnglish`, and `BrandMark`.
+> **Branding:** Korean display name **수리수리**, English display name **EAGLE vision**. The brand-blue palette (`#0d47a1`) and logo lockups match the web site at myopiamanage.org. Source SVGs live in `EagleVision/Resources/` and are referenced from `Assets.xcassets` as `BrandLogo`, `BrandLogoEnglish`, and `BrandMark`.
 
 > **Status:** Scaffold / specification repo. No production build yet.
 
@@ -44,8 +44,8 @@ The axial-length viewer side of the app is **read-only**: all clinical data is p
 
 ```
 myopia-ios/
-├── MyoDoc/                  # Xcode app target source folder
-│   ├── App/                      # @main entry (MyoDocApp.swift), RootView
+├── EagleVision/                  # Xcode app target source folder
+│   ├── App/                      # @main entry (EagleVisionApp.swift), RootView
 │   ├── Core/
 │   │   ├── Auth/                 # Auth providers (Apple, Google, Kakao, Naver, password)
 │   │   ├── Models/               # Codable structs mirroring backend DTOs
@@ -59,13 +59,13 @@ myopia-ios/
 │   │   ├── Community/            # 자유게시판: list, detail, composer, comments
 │   │   └── ScreenTime/           # Family Controls plan (v2)
 │   └── Resources/
-│       ├── myodoc-logo.svg      # Full wordmark (Korean)
-│       ├── myodoc-english.svg   # English wordmark
-│       ├── myodoc-mark.svg      # Glyph / app icon source
+│       ├── eaglevision-logo.svg      # Full wordmark (Korean)
+│       ├── eaglevision-english.svg   # English wordmark
+│       ├── eaglevision-mark.svg      # Glyph / app icon source
 │       ├── Info.plist                # Template — copy keys into Xcode target
 │       └── Assets.xcassets/
 │           ├── AppIcon.appiconset/   # All 15 iOS icon PNGs (rasterized)
-│           ├── BrandLogo.imageset/   # References myodoc-logo.svg
+│           ├── BrandLogo.imageset/   # References eaglevision-logo.svg
 │           ├── BrandLogoEnglish.imageset/
 │           ├── BrandMark.imageset/
 │           └── AccentColor.colorset/ # Brand blue #0d47a1
@@ -84,16 +84,16 @@ myopia-ios/
 
 1. **Create the Xcode project shell**
    Open Xcode → **File → New → Project → iOS → App**.
-   - Product name: **MyoDoc** (not "마이오닥" — Xcode wants an ASCII identifier; the Korean display name is set via `CFBundleDisplayName`)
+   - Product name: **EagleVision** (not "수리수리" — Xcode wants an ASCII identifier; the Korean display name is set via `CFBundleDisplayName`)
    - Interface: SwiftUI · Language: Swift · Minimum iOS: 17.0
    - Organization identifier: e.g. `org.myopiamanage`
-2. **Point the project at this folder's sources.** Delete the auto-generated `ContentView.swift` and the `MyoDocApp.swift` Xcode creates, then drag the files under `MyoDoc/` into the project (Create groups, add to the `MyoDoc` target). Make sure `Assets.xcassets` is in the target's "Copy Bundle Resources" phase.
+2. **Point the project at this folder's sources.** Delete the auto-generated `ContentView.swift` and the `EagleVisionApp.swift` Xcode creates, then drag the files under `EagleVision/` into the project (Create groups, add to the `EagleVision` target). Make sure `Assets.xcassets` is in the target's "Copy Bundle Resources" phase.
 3. **Install Swift packages** (File → Add Package Dependencies):
    - `https://github.com/google/GoogleSignIn-iOS`
    - `https://github.com/kakao/kakao-ios-sdk` (via Swift Package)
    - `https://github.com/naver/naveridlogin-sdk-ios-swift`
-4. **Configure URL schemes & Info.plist keys** – copy the template at [`MyoDoc/Resources/Info.plist`](MyoDoc/Resources/Info.plist) into the target, or let Xcode auto-generate and copy individual keys. Details in [`docs/ARCHITECTURE.md § Auth configuration`](docs/ARCHITECTURE.md).
-5. **Set backend base URL** in `MyoDoc/Core/Networking/APIConfig.swift` (or via the `API_BASE_URL` build setting referenced from `Info.plist`).
+4. **Configure URL schemes & Info.plist keys** – copy the template at [`EagleVision/Resources/Info.plist`](EagleVision/Resources/Info.plist) into the target, or let Xcode auto-generate and copy individual keys. Details in [`docs/ARCHITECTURE.md § Auth configuration`](docs/ARCHITECTURE.md).
+5. **Set backend base URL** in `EagleVision/Core/Networking/APIConfig.swift` (or via the `API_BASE_URL` build setting referenced from `Info.plist`).
 6. **Apply community-board database migration** on the backend:
    ```bash
    cd ~/code/myopia/myopiaBackend

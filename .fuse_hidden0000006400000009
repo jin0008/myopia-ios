@@ -20,7 +20,7 @@ cd ~/code/myopia-ios
 ```bash
 git init -b main
 git add .
-git commit -m "chore: initial scaffold for 마이오닥 (MyoDoc) iOS app"
+git commit -m "chore: initial scaffold for 수리수리 (EAGLE vision) iOS app"
 ```
 
 ## 3. Create the GitHub repo and push
@@ -29,7 +29,7 @@ git commit -m "chore: initial scaffold for 마이오닥 (MyoDoc) iOS app"
 # --private is recommended because this references your clinical product.
 gh repo create myopia-ios \
   --private \
-  --description "MyoDoc (마이오닥) — iPhone app for parents to monitor children's axial length via myopiamanage.org" \
+  --description "EAGLE vision (수리수리) — iPhone app for parents to monitor children's axial length via myopiamanage.org" \
   --source=. \
   --remote=origin \
   --push
@@ -39,23 +39,23 @@ This creates `https://github.com/<your-username>/myopia-ios` and pushes your `ma
 
 ## 4. Create the Xcode project inside the repo
 
-You'll need Xcode to create the `.xcodeproj` (it's binary, so it can't be generated cleanly from a text-only scaffold). Because the scaffold already has an `MyoDoc/` folder with our sources in it, create the Xcode project in a **temp location** first, then move just the `.xcodeproj` into place — this avoids a folder-name collision.
+You'll need Xcode to create the `.xcodeproj` (it's binary, so it can't be generated cleanly from a text-only scaffold). Because the scaffold already has an `EagleVision/` folder with our sources in it, create the Xcode project in a **temp location** first, then move just the `.xcodeproj` into place — this avoids a folder-name collision.
 
 1. Open Xcode → **File → New → Project → iOS → App**.
-2. Product name: **MyoDoc** · Team: your Apple Developer team · Organization identifier: e.g. `org.myopiamanage` · Interface: **SwiftUI** · Language: **Swift** · Minimum iOS: **17.0**.
-3. Save it into a throwaway folder like `~/Desktop/xcode-tmp/`. Xcode will create `~/Desktop/xcode-tmp/MyoDoc/` with a `.xcodeproj` and some starter Swift files.
+2. Product name: **EagleVision** · Team: your Apple Developer team · Organization identifier: e.g. `org.myopiamanage` · Interface: **SwiftUI** · Language: **Swift** · Minimum iOS: **17.0**.
+3. Save it into a throwaway folder like `~/Desktop/xcode-tmp/`. Xcode will create `~/Desktop/xcode-tmp/EagleVision/` with a `.xcodeproj` and some starter Swift files.
 4. Move the `.xcodeproj` into the repo and delete the throwaway tree:
    ```bash
-   mv ~/Desktop/xcode-tmp/MyoDoc/MyoDoc.xcodeproj ~/code/myopia-ios/
+   mv ~/Desktop/xcode-tmp/EagleVision/EagleVision.xcodeproj ~/code/myopia-ios/
    rm -rf ~/Desktop/xcode-tmp
    ```
-5. Open `~/code/myopia-ios/MyoDoc.xcodeproj` in Xcode. The project will show missing-file warnings because the sources it was pointing at no longer exist. In the Project Navigator:
-   - **Remove** the auto-generated `MyoDocApp.swift`, `ContentView.swift`, `Assets.xcassets`, and `Preview Content` references (Right-click → **Delete → Remove Reference**, NOT "Move to Trash").
-   - Drag the scaffold's `MyoDoc/App/`, `MyoDoc/Core/`, `MyoDoc/Features/`, and `MyoDoc/Resources/` folders from Finder into the navigator. In the import dialog, check **Create groups** and **Add to target: MyoDoc**. Confirm `Assets.xcassets` is in the "Copy Bundle Resources" build phase.
-6. Point `INFOPLIST_FILE` at the scaffold's template: target → **Build Settings → Info.plist File** → `MyoDoc/Resources/Info.plist`, and set `GENERATE_INFOPLIST_FILE = NO`. Then set the remaining build settings (target → Build Settings, or in an `.xcconfig`):
+5. Open `~/code/myopia-ios/EagleVision.xcodeproj` in Xcode. The project will show missing-file warnings because the sources it was pointing at no longer exist. In the Project Navigator:
+   - **Remove** the auto-generated `EagleVisionApp.swift`, `ContentView.swift`, `Assets.xcassets`, and `Preview Content` references (Right-click → **Delete → Remove Reference**, NOT "Move to Trash").
+   - Drag the scaffold's `EagleVision/App/`, `EagleVision/Core/`, `EagleVision/Features/`, and `EagleVision/Resources/` folders from Finder into the navigator. In the import dialog, check **Create groups** and **Add to target: EagleVision**. Confirm `Assets.xcassets` is in the "Copy Bundle Resources" build phase.
+6. Point `INFOPLIST_FILE` at the scaffold's template: target → **Build Settings → Info.plist File** → `EagleVision/Resources/Info.plist`, and set `GENERATE_INFOPLIST_FILE = NO`. Then set the remaining build settings (target → Build Settings, or in an `.xcconfig`):
    ```
-   PRODUCT_NAME = MyoDoc
-   PRODUCT_BUNDLE_IDENTIFIER = org.myopiamanage.MyoDoc
+   PRODUCT_NAME = EagleVision
+   PRODUCT_BUNDLE_IDENTIFIER = org.myopiamanage.EagleVision
    KAKAO_APP_KEY = <native-app-key>
    NAVER_CONSUMER_KEY = <consumer-key>
    NAVER_CONSUMER_SECRET = <consumer-secret>
@@ -72,7 +72,7 @@ You'll need Xcode to create the `.xcodeproj` (it's binary, so it can't be genera
 
 ```bash
 cd ~/code/myopia-ios
-git add MyoDoc.xcodeproj Package.resolved 2>/dev/null || true
+git add EagleVision.xcodeproj Package.resolved 2>/dev/null || true
 git add .
 git commit -m "chore: add Xcode project + SPM deps"
 git push
@@ -84,7 +84,7 @@ git push
 - **Secrets** for CI (Settings → Secrets and variables → Actions):
   - `APP_STORE_CONNECT_API_KEY` (when you add Fastlane)
 - **Apple Developer portal**:
-  - Create App ID matching your bundle id (e.g. `org.myopiamanage.MyoDoc`).
+  - Create App ID matching your bundle id (e.g. `org.myopiamanage.EagleVision`).
   - Enable **Sign in with Apple** capability on the App ID.
   - Upload a Services ID and private key `.p8` to the VM (path referenced by `APPLE_PRIVATE_KEY_PATH`).
 - **Provider consoles**:

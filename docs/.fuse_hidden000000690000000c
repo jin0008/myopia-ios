@@ -1,4 +1,4 @@
-# Backend changes on myopiamanage.org (for 마이오닥 · MyoDoc iOS)
+# Backend changes on myopiamanage.org (for 수리수리 · EAGLE vision iOS)
 
 > **Status:** ✅ Applied. The reference implementation lives in the `myopiaBackend` repo and is summarized below for iOS-side context. For the actionable deploy instructions see **`myopiaBackend/MOBILE_API_SETUP.md`** — this file is kept for architectural reference only.
 
@@ -92,7 +92,7 @@ MOBILE_JWT_SECRET=<64-char random>
 MOBILE_JWT_ISSUER=myopiamanage.org
 
 # Apple Sign In
-APPLE_BUNDLE_ID=org.myopiamanage.MyoDoc
+APPLE_BUNDLE_ID=org.myopiamanage.EagleVision
 
 # Google (you already have a web client; add the iOS client ID)
 GOOGLE_IOS_CLIENT_ID=<yourproject>.apps.googleusercontent.com

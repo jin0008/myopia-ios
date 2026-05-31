@@ -1,0 +1,43 @@
+import SwiftUI
+import GoogleSignIn
+import KakaoSDKCommon
+import KakaoSDKAuth
+import NaverThirdPartyLogin
+
+@main
+struct MyoDocApp: App {
+
+    @StateObject private var session = SessionStore()
+    @StateObject private var localization = LocalizationStore()
+
+    init() {
+        // Kakao SDK
+        if let key = Bundle.main.object(forInfoDictionaryKey: "KAKAO_APP_KEY") as? String {
+            KakaoSDK.initSDK(appKey: key)
+        }
+        // Naver SDK (configured in AppDelegate-style if needed)
+        NaverThirdPartyLoginConnection
+            .getSharedInstance()?
+            .isNaverAppOauthEnable = true
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+                .environmentObject(session)
+                .environmentObject(localization)
+                .environment(\.locale, localization.locale)
+                .onOpenURL { url in
+                    // Route incoming OAuth callbacks to the right SDK
+                    if GIDSignIn.sharedInstance.handle(url) { return }
+                    if AuthApi.isKakaoTalkLoginUrl(url) {
+                        _ = AuthController.handleOpenUrl(url: url)
+                        return
+                    }
+                    NaverThirdPartyLoginConnection
+                        .getSharedInstance()?
+                        .application(UIApplication.shared, open: url, options: [:])
+                }
+        }
+    }
+}

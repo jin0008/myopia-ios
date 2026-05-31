@@ -1,6 +1,6 @@
 # Community board (자유게시판) — design & API
 
-The community board lets any signed-in regular user of the 마이오닥 (MyoDoc) app post threads, comment on other threads, reply to comments, and like posts/comments. It's deliberately scoped narrow — no DMs, no images (v1), no follow graph. The intent is "Naver-cafe-style 게시판" alongside the clinical viewer, not a general social network.
+The community board lets any signed-in regular user of the 수리수리 (EAGLE vision) app post threads, comment on other threads, reply to comments, and like posts/comments. It's deliberately scoped narrow — no DMs, no images (v1), no follow graph. The intent is "Naver-cafe-style 게시판" alongside the clinical viewer, not a general social network.
 
 ## Data model
 

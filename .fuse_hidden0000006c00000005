@@ -20,7 +20,7 @@ cd ~/code/myopia-ios
 ```bash
 git init -b main
 git add .
-git commit -m "chore: initial scaffold for 마이오닥 (MyoDoc) iOS app"
+git commit -m "chore: initial scaffold for 수리수리 (MyoDoc) iOS app"
 ```
 
 ## 3. Create the GitHub repo and push
@@ -29,7 +29,7 @@ git commit -m "chore: initial scaffold for 마이오닥 (MyoDoc) iOS app"
 # --private is recommended because this references your clinical product.
 gh repo create myopia-ios \
   --private \
-  --description "MyoDoc (마이오닥) — iPhone app for parents to monitor children's axial length via myopiamanage.org" \
+  --description "MyoDoc (수리수리) — iPhone app for parents to monitor children's axial length via myopiamanage.org" \
   --source=. \
   --remote=origin \
   --push

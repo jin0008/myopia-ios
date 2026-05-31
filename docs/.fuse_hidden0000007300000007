@@ -1,4 +1,4 @@
-# Backend changes on myopiamanage.org (for 마이오닥 · MyoDoc iOS)
+# Backend changes on myopiamanage.org (for 수리수리 · MyoDoc iOS)
 
 > **Status:** ✅ Applied. The reference implementation lives in the `myopiaBackend` repo and is summarized below for iOS-side context. For the actionable deploy instructions see **`myopiaBackend/MOBILE_API_SETUP.md`** — this file is kept for architectural reference only.
 
