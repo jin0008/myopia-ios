@@ -6,6 +6,7 @@ xcuserdata/
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
 *.xcodeproj/project.xcworkspace/xcuserdata/
+.fuse_hidden*
 
 # Swift Package Manager
 .swiftpm/
