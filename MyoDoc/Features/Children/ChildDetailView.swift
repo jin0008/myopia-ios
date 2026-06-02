@@ -20,9 +20,9 @@ struct ChildDetailView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     }
-                    .padding(12)
-                    .background(Color.accentColor.opacity(0.08))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(13)
+                    .background(Color.accentColor.opacity(0.08),
+                                in: RoundedRectangle(cornerRadius: 18, style: .continuous))  // Liquid Glass: rounder
                     .padding(.horizontal)
                 }
                 if lifestyleReminderDue {
@@ -81,8 +81,7 @@ struct ChildDetailView: View {
             Image(systemName: "chevron.right").foregroundStyle(.secondary)
         }
         .padding()
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .glassCard(cornerRadius: 18)   // Liquid Glass: rounder content card (was thinMaterial r12)
     }
 
     private func load() async {
@@ -119,8 +118,7 @@ private struct SummaryCard: View {
             }
         }
         .padding()
-        .background(.thinMaterial)
-        .cornerRadius(12)
+        .glassCard()   // Liquid Glass: rounder content card (was thinMaterial r12)
         .padding(.horizontal)
     }
 }

@@ -31,18 +31,23 @@ struct LoginView: View {
                 Spacer(minLength: 12)
 
                 VStack(spacing: 16) {
+                    // Liquid Glass (iOS 26): capsule glass fields (was thinMaterial + r10).
                     TextField("login.username", text: $username)
                         .textContentType(.username)
                         .textInputAutocapitalization(.never)
-                        .padding().background(.thinMaterial).cornerRadius(10)
+                        .padding(.horizontal, 18).padding(.vertical, 14)
+                        .glassControl(in: Capsule())
                     SecureField("login.password", text: $password)
                         .textContentType(.password)
-                        .padding().background(.thinMaterial).cornerRadius(10)
+                        .padding(.horizontal, 18).padding(.vertical, 14)
+                        .glassControl(in: Capsule())
 
+                    // Liquid Glass (iOS 26): tinted glass-prominent capsule (was borderedProminent).
                     Button { Task { await passwordLogin() } } label: {
                         Text("login.button").frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent)
+                    .glassProminentButton()
+                    .controlSize(.large)
                     .disabled(isWorking)
 
                     Divider().padding(.vertical, 8)
@@ -51,7 +56,8 @@ struct LoginView: View {
                         onRequest: { $0.requestedScopes = [.email, .fullName] },
                         onCompletion: { result in Task { await handleApple(result) } }
                     )
-                    .frame(height: 48)
+                    .frame(height: 50)
+                    .clipShape(Capsule())
                     .signInWithAppleButtonStyle(.black)
 
                     SocialButton(titleKey: "login.google", image: "g.circle.fill") {
@@ -148,12 +154,14 @@ private struct SocialButton: View {
                 Text(titleKey).fontWeight(.semibold)
                 Spacer()
             }
-            .padding()
+            .padding(.horizontal, 18)
+            .padding(.vertical, 15)
             .frame(maxWidth: .infinity)
-            .background(color.opacity(0.15))
+            .background(color.opacity(0.15), in: Capsule())   // Liquid Glass: capsule (was r10)
             .foregroundStyle(.primary)
-            .cornerRadius(10)
+            .clipShape(Capsule())
         }
+        .buttonStyle(.plain)
     }
 }
 

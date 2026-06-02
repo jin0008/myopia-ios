@@ -53,6 +53,9 @@ struct CommunityDetailView: View {
                         onChange?()
                     }
                 }
+                // Liquid Glass (iOS 26): glass sheet + detents/grabber.
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $editingPost) {
                 if let post = model.post {
@@ -62,6 +65,8 @@ struct CommunityDetailView: View {
                             onChange?()
                         }
                     }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
                 }
             }
             .task { await model.load() }
@@ -130,7 +135,7 @@ struct CommunityDetailView: View {
                           systemImage: post.likedByMe ? "heart.fill" : "heart")
                         .foregroundStyle(post.likedByMe ? .pink : .secondary)
                 }
-                .buttonStyle(.bordered)
+                .glassButton()   // Liquid Glass (iOS 26): glass capsule (was .bordered)
                 Label("\(post.commentCount)", systemImage: "bubble.left")
                     .foregroundStyle(.secondary)
                 Spacer()
@@ -211,9 +216,10 @@ struct CommunityDetailView: View {
                         .foregroundStyle(.secondary)
                     Spacer()
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(Color(.secondarySystemBackground))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 11)
+                // Liquid Glass (iOS 26): glass capsule field (was secondarySystemBackground).
+                .glassControl(in: Capsule())
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)

@@ -46,5 +46,8 @@ struct MainTabView: View {
                     }
                 }
         }
+        // Liquid Glass (iOS 26): the system renders the floating glass tab bar
+        // automatically; this opts into the shrink-on-scroll behavior.
+        .glassTabBarMinimize()
     }
 }

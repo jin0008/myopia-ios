@@ -49,6 +49,10 @@ struct ChildrenListView: View {
                 AddChildView { new in
                     children.append(new)
                 }
+                // Liquid Glass (iOS 26): sheet is glass automatically; add detents
+                // + grabber so the glass + drag indicator read well.
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
             .task { await load() }
         }

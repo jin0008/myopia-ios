@@ -14,17 +14,16 @@ struct LanguagePill: View {
             segment("KOR", isOn: localization.selection == .korean) {
                 localization.selection = .korean
             }
-            Divider().frame(height: 14)
             segment("ENG", isOn: localization.selection == .english) {
                 localization.selection = .english
             }
         }
         .font(.caption.weight(.semibold))
-        .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(.thinMaterial)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        // Liquid Glass (iOS 26): a clear glass capsule instead of a material
+        // rounded-rect; falls back to .thinMaterial pre-26.
+        .padding(2)
+        .glassControl(in: Capsule())
+        .clipShape(Capsule())
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text("settings.language"))
     }
@@ -33,10 +32,10 @@ struct LanguagePill: View {
     private func segment(_ label: String, isOn: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .padding(.horizontal, 10)
+                .padding(.horizontal, 11)
                 .padding(.vertical, 6)
                 .foregroundStyle(isOn ? Color.accentColor : Color.secondary)
-                .background(isOn ? Color.accentColor.opacity(0.12) : Color.clear)
+                .background(isOn ? Color.accentColor.opacity(0.12) : Color.clear, in: Capsule())
         }
         .buttonStyle(.plain)
     }
