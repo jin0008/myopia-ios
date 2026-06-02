@@ -12,6 +12,7 @@
   Replace the ${PLACEHOLDER} values before the first build:
 
     ${PRODUCT_BUNDLE_IDENTIFIER}  →  com.yourcompany.MyoDoc
+    ${GOOGLE_IOS_CLIENT_ID}       →  <id>.apps.googleusercontent.com
     ${GOOGLE_REVERSED_CLIENT_ID}  →  com.googleusercontent.apps.<id>
     ${KAKAO_APP_KEY}              →  kakao<native-app-key>
     ${NAVER_URL_SCHEME}           →  e.g. naverloginmyodoc
@@ -121,6 +122,16 @@
             </array>
         </dict>
     </array>
+
+    <!-- Google Sign-In iOS client ID (the GoogleSignIn SDK reads this key
+         directly from Info.plist). This is the "Client ID" shown for the iOS
+         OAuth client in Google Cloud Console — format:
+           <id>.apps.googleusercontent.com
+         It is the SAME value the backend expects as GOOGLE_IOS_CLIENT_ID.
+         Note: GOOGLE_REVERSED_CLIENT_ID above is this value with the
+         dot-delimited fields reversed (shown as "iOS URL scheme"). -->
+    <key>GIDClientID</key>
+    <string>${GOOGLE_IOS_CLIENT_ID}</string>
 
     <!-- Apps we need to open / detect (Kakao/Naver app-switch login) -->
     <key>LSApplicationQueriesSchemes</key>
