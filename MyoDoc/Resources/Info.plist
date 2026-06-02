@@ -100,7 +100,7 @@
             <string>google</string>
             <key>CFBundleURLSchemes</key>
             <array>
-                <string>${GOOGLE_REVERSED_CLIENT_ID}</string>
+                <string>com.googleusercontent.apps.423542206389-80vnoq0qsrhu3ler02lodo3917l7mlal</string>
             </array>
         </dict>
         <!-- Kakao: "kakao" + native-app-key (no dots, all lowercase) -->
@@ -131,7 +131,7 @@
          Note: GOOGLE_REVERSED_CLIENT_ID above is this value with the
          dot-delimited fields reversed (shown as "iOS URL scheme"). -->
     <key>GIDClientID</key>
-    <string>${GOOGLE_IOS_CLIENT_ID}</string>
+    <string>423542206389-80vnoq0qsrhu3ler02lodo3917l7mlal.apps.googleusercontent.com</string>
 
     <!-- Apps we need to open / detect (Kakao/Naver app-switch login) -->
     <key>LSApplicationQueriesSchemes</key>
