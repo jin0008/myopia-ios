@@ -31,3 +31,8 @@ fastlane/README.md
 GoogleService-Info.plist
 .env
 .env.*
+# Build-setting files that hold real keys/secrets (e.g. NAVER_CONSUMER_SECRET,
+# KAKAO_APP_KEY). Never commit filled-in xcconfigs. If you want a committed
+# template, name it *.example.xcconfig and un-ignore it below.
+*.xcconfig
+!*.example.xcconfig
