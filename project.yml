@@ -1,0 +1,94 @@
+# XcodeGen project definition for MyoDoc (마이오닥) iOS.
+#
+# Why this exists:
+#   The app is a source-only scaffold with no committed .xcodeproj. Generating
+#   the project from this manifest means the source glob below (path: MyoDoc)
+#   ALWAYS picks up every file under MyoDoc/ — including the openapi-generated
+#   models in MyoDoc/Core/Generated that get rewritten by
+#   ../myopia-shared/scripts/generate.sh. No more manually adding files to the
+#   target after each regeneration.
+#
+# Usage (on a Mac):
+#   brew install xcodegen        # once
+#   cd myopia-ios
+#   xcodegen generate            # regenerates MyoDoc.xcodeproj from this file
+#   open MyoDoc.xcodeproj
+#
+# Re-run `xcodegen generate` whenever files are added/removed (e.g. after
+# regenerating the API models). Committed source is the source of truth;
+# MyoDoc.xcodeproj can be regenerated at any time (safe to gitignore it).
+
+name: MyoDoc
+
+options:
+  bundleIdPrefix: org.myopiamanage
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # Set your Apple Developer team, or configure signing in Xcode after generating.
+    # DEVELOPMENT_TEAM: XXXXXXXXXX
+
+# ---------------------------------------------------------------------------
+# Swift Package dependencies for the social-login SDKs.
+#
+# ⚠️ VERIFY VERSIONS before first build — the `from:` values below are
+# starting points, not confirmed-good pins. Bump to the latest that builds.
+#
+# ⚠️ NAVER CAVEAT: SocialProviders.swift and MyoDocApp.swift currently import
+# the LEGACY module `NaverThirdPartyLogin` and use `NaverThirdPartyLoginConnection`.
+# The package referenced here (naveridlogin-sdk-ios-swift) now vends the module
+# `NidThirdPartyLogin` with a different (NidOAuth) API. So Naver will NOT compile
+# as-is. Choose one:
+#   (a) migrate the Naver code in SocialProviders.swift/MyoDocApp.swift to the
+#       new NidThirdPartyLogin / NidOAuth API, or
+#   (b) point this package at a version/repo that still exports the legacy
+#       `NaverThirdPartyLogin` module and pin it here.
+# Until then you can comment out the Naver package + its dependency below and
+# the Naver code to get the rest of the app building.
+# ---------------------------------------------------------------------------
+packages:
+  GoogleSignIn:
+    url: https://github.com/google/GoogleSignIn-iOS
+    from: "7.1.0"
+  Kakao:
+    url: https://github.com/kakao/kakao-ios-sdk
+    from: "2.24.0"
+  Naver:
+    url: https://github.com/naver/naveridlogin-sdk-ios-swift
+    from: "4.2.3"
+
+targets:
+  MyoDoc:
+    type: application
+    platform: iOS
+    sources:
+      - path: MyoDoc
+        # Info.plist is supplied via INFOPLIST_FILE, not compiled as a resource.
+        excludes:
+          - "Resources/Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.myopiamanage.MyoDoc
+        INFOPLIST_FILE: MyoDoc/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: "NO"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Automatic
+    dependencies:
+      - package: GoogleSignIn
+        product: GoogleSignIn
+      - package: Kakao
+        product: KakaoSDKCommon
+      - package: Kakao
+        product: KakaoSDKAuth
+      - package: Kakao
+        product: KakaoSDKUser
+      # See NAVER CAVEAT above before enabling this.
+      - package: Naver
+        product: NidThirdPartyLogin

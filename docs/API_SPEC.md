@@ -273,6 +273,143 @@ Used by the iOS reminder banner to decide whether to nag the parent.
 
 ---
 
+## AI chatbot (마이오닥 AI)
+
+### `POST /chat` *(auth)*
+RAG-based assistant. The server retrieves the most relevant clinician-reviewed
+Q&A items for the question, grounds the model on them, and returns a structured
+answer. Emergency-looking symptoms are intercepted before any model call and
+answered with fixed guidance. Per-user (30/day) and global (500/day) caps apply.
+
+Request
+```json
+{
+  "question": "아트로핀 넣고 눈부셔하는데 괜찮은가요?",
+  "history": [
+    { "role": "user",  "text": "드림렌즈가 뭐예요?" },
+    { "role": "model", "text": "드림렌즈는 ..." }
+  ]
+}
+```
+- `question` (string, required, ≤ 500 chars).
+- `history` (optional) — recent turns for context; only the last 6 turn-pairs are used. `role` is `"user"` or `"model"`.
+
+Response `200`
+```json
+{
+  "mode": "qa",
+  "answer": "저농도 아트로핀 점안 후 눈부심은 ...",
+  "refs": ["atropine-02"],
+  "suggestions": ["아트로핀은 언제까지 넣어야 하나요?", "..."],
+  "sources": [{ "title": "...", "url": "https://..." }]
+}
+```
+- `mode` — one of:
+  - `qa` — answered from the reviewed corpus; `refs` holds the source item ids.
+  - `general` — general eye/myopia info outside the corpus (may include web `sources`).
+  - `consult` — question needs the child's own doctor; general principles only.
+  - `emergency` — possible emergency; `answer` is fixed guidance, `suggestions`/`sources` empty.
+  - `limited` — daily quota exhausted; `answer` explains to try tomorrow.
+  - `error` — validation or upstream failure; `answer` is a friendly message.
+- `refs` — reviewed Q&A item ids used as evidence (empty unless `mode="qa"`).
+- `suggestions` — up to 3 follow-up questions (empty for `emergency`).
+- `sources` — up to 3 web sources `{ title, url }` (only when search grounding succeeds).
+
+> When `GEMINI_API_KEY` is unset the endpoint runs in **mock mode** and returns a
+> canned `qa`/`general` response so the chat UI works end-to-end without a key.
+
+---
+
+## Facility finder (기관 찾기)
+
+### `GET /hospitals/search` *(public)*
+Unified place list for the "find a facility" map/list screen.
+
+Query params
+- `type` — `"clinic"` (default) | `"optical"` | `"lasik"`.
+- `q` — optional case-insensitive name search.
+- `lat`, `lng` — optional viewer coordinates (numbers).
+- `limit` — optional, default 20, max 50.
+
+Response `200`
+```json
+{
+  "places": [
+    {
+      "id": "uuid",
+      "name": "샘안과병원",
+      "type": "clinic",
+      "address": null,
+      "lat": null,
+      "lng": null,
+      "distanceKm": null,
+      "phone": null,
+      "rating": null,
+      "isPartner": true
+    }
+  ]
+}
+```
+- `type="clinic"` is backed by the real partner `hospital` table (`isPartner=true`). As of migration `20260716120000_hospital_geo` the table has nullable `address`, `phone`, `latitude`, `longitude` columns which are mapped here; rows without coordinates still return `null` for `lat`/`lng`/`distanceKm`. Backfill coordinates from address with `src/migration/geocode_hospitals.ts`, or set them manually (see BACKEND_CHANGES). `rating` is still always `null` (no ratings source).
+- `type="optical"` and `type="lasik"` currently return `{ "places": [] }` — no data source yet, same shape preserved.
+- When both `lat`/`lng` and a place's coordinates are present, `distanceKm` is the haversine distance and the list is sorted ascending; otherwise `distanceKm` is `null`.
+
+---
+
+## Expert columns (전문가 칼럼)
+
+> **Seed content.** There is no column/article table yet, so these serve a small
+> fixed set derived from the reviewed Q&A source docs (one column per topic).
+> Shapes below are the stable client contract; the data source can be swapped
+> later without changing them.
+
+### `GET /columns` *(public)*
+Query params
+- `category` — optional topic filter (e.g. `atropine`, `orthok`, `lifestyle`).
+- `cursor` — optional; the `id` of the last item from the previous page.
+- `pageSize` — optional, default 20, max 50.
+
+Response `200`
+```json
+{
+  "items": [
+    {
+      "id": "atropine",
+      "title": "저농도 아트로핀 점안액",
+      "excerpt": "저농도 아트로핀 점안액은 ...",
+      "category": "atropine",
+      "author": "마이오닥 의료진",
+      "authorRole": "안과 감수",
+      "thumbnailEmoji": "💧",
+      "likeCount": 0,
+      "commentCount": 0,
+      "publishedAt": "2026-07-05T00:00:00.000Z"
+    }
+  ],
+  "nextCursor": null
+}
+```
+`nextCursor` is the id to pass back as `cursor` for the next page, or `null` when there are no more items.
+
+### `GET /columns/:id` *(public)*
+Response `200`
+```json
+{
+  "id": "atropine",
+  "title": "저농도 아트로핀 점안액",
+  "body": "### [atropine-01] ...\n\n...",
+  "category": "atropine",
+  "author": "마이오닥 의료진",
+  "authorRole": "안과 감수",
+  "likeCount": 0,
+  "commentCount": 0,
+  "publishedAt": "2026-07-05T00:00:00.000Z"
+}
+```
+`404 not_found` if the id is unknown. `body` is the full markdown of the column.
+
+---
+
 ## Error format
 
 Non-2xx responses always return

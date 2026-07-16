@@ -4,6 +4,20 @@ import Foundation
 actor APIClient {
     static let shared = APIClient()
 
+    /// Backend timestamps come from `Date.toISOString()`, which always emits
+    /// fractional seconds (e.g. 2026-04-21T11:00:00.123Z). Some values may
+    /// omit them, so we try both.
+    nonisolated static let iso8601WithFraction: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+    nonisolated static let iso8601Plain: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
@@ -11,13 +25,26 @@ actor APIClient {
     init(session: URLSession = .shared) {
         self.session = session
 
+        // NOTE: no global snake_case conversion. The generated models
+        // (Core/Generated) carry explicit CodingKeys for every field, so the
+        // wire keys map exactly — mixing a global strategy with those explicit
+        // keys would break snake_case fields (e.g. od_sph) and camelCase
+        // request bodies (e.g. hospitalCode). Date-only fields are modeled as
+        // String; only true timestamps are Date, decoded below.
         let d = JSONDecoder()
-        d.keyDecodingStrategy = .convertFromSnakeCase
-        d.dateDecodingStrategy = .iso8601
+        d.dateDecodingStrategy = .custom { decoder in
+            let raw = try decoder.singleValueContainer().decode(String.self)
+            if let date = APIClient.iso8601WithFraction.date(from: raw)
+                ?? APIClient.iso8601Plain.date(from: raw) {
+                return date
+            }
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: decoder.codingPath,
+                      debugDescription: "Unrecognized ISO-8601 date: \(raw)"))
+        }
         self.decoder = d
 
         let e = JSONEncoder()
-        e.keyEncodingStrategy = .convertToSnakeCase
         e.dateEncodingStrategy = .iso8601
         self.encoder = e
     }

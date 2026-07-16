@@ -153,3 +153,55 @@
 "settings.terms"            = "Terms of service";
 "settings.logout"           = "Log out";
 "settings.deleteAccount"    = "Delete account";
+
+/* ------- New tabs ------- */
+"tab.home"             = "Home";
+"tab.columns"          = "Columns";
+
+/* ------- Home dashboard ------- */
+"home.title"                 = "MyoDoc";
+"home.more"                  = "See all";
+"home.section.children"      = "My children";
+"home.section.columns"       = "Expert columns";
+"home.section.popular"       = "Popular in community";
+"home.children.empty.title"  = "Register a child";
+"home.children.empty.body"   = "Link a child to see their axial-length trend.";
+"home.card.risk"             = "Risk";
+"home.svc.columns"           = "Expert\ncolumns";
+"home.svc.finder"            = "Find a\nclinic";
+"home.svc.community"         = "Community";
+
+/* ------- Risk status ------- */
+"risk.low"                   = "Low";
+"risk.monitoring"            = "Watch";
+"risk.moderate"              = "Moderate";
+"risk.high"                  = "High";
+"risk.unknown"               = "—";
+
+/* ------- AI chat ------- */
+"chat.title"                 = "AI consult";
+"chat.launch"                = "Ask the AI";
+"chat.thinking"              = "Thinking…";
+"chat.sources"               = "Sources";
+"chat.input.placeholder"     = "Ask about myopia care…";
+"chat.intro.title"           = "Ask MyoDoc AI";
+"chat.intro.body"            = "I answer from clinician-reviewed Q&A about children's myopia care.";
+"chat.intro.disclaimer"      = "This is general information, not a diagnosis. For urgent symptoms, see an eye clinic right away.";
+
+/* ------- Facility finder ------- */
+"finder.title"               = "Find a facility";
+"finder.type"                = "Type";
+"finder.type.clinic"         = "Eye clinic";
+"finder.type.optical"        = "Optician";
+"finder.type.lasik"          = "LASIK";
+"finder.search.placeholder"  = "Search by name";
+"finder.partner"             = "Partner";
+"finder.loadFail"            = "Couldn't load";
+"finder.empty.title"         = "No results";
+"finder.empty.body"          = "Try a different type or search term.";
+
+/* ------- Expert columns ------- */
+"columns.title"              = "Expert columns";
+"columns.category.all"       = "All";
+"columns.loadFail"           = "Couldn't load";
+"columns.disclaimer"         = "Educational content reviewed by clinicians. Not a substitute for an in-person exam.";

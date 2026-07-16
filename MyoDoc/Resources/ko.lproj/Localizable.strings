@@ -153,3 +153,55 @@
 "settings.terms"            = "이용약관";
 "settings.logout"           = "로그아웃";
 "settings.deleteAccount"    = "회원 탈퇴";
+
+/* ------- New tabs ------- */
+"tab.home"             = "홈";
+"tab.columns"          = "칼럼";
+
+/* ------- Home dashboard ------- */
+"home.title"                 = "마이오닥";
+"home.more"                  = "전체 보기";
+"home.section.children"      = "내 아이 모니터링";
+"home.section.columns"       = "전문가 칼럼";
+"home.section.popular"       = "커뮤니티 인기글";
+"home.children.empty.title"  = "자녀를 등록하세요";
+"home.children.empty.body"   = "자녀를 연동하면 안축장 추이를 볼 수 있어요.";
+"home.card.risk"             = "위험도";
+"home.svc.columns"           = "전문가\n칼럼";
+"home.svc.finder"            = "가까운\n기관찾기";
+"home.svc.community"         = "커뮤니티";
+
+/* ------- Risk status ------- */
+"risk.low"                   = "안정";
+"risk.monitoring"            = "관찰";
+"risk.moderate"              = "주의";
+"risk.high"                  = "높음";
+"risk.unknown"               = "—";
+
+/* ------- AI 상담 ------- */
+"chat.title"                 = "AI 상담";
+"chat.launch"                = "AI에게 묻기";
+"chat.thinking"              = "생각 중…";
+"chat.sources"               = "출처";
+"chat.input.placeholder"     = "근시 관리에 대해 물어보세요…";
+"chat.intro.title"           = "마이오닥 AI에게 물어보세요";
+"chat.intro.body"            = "의료진이 감수한 소아 근시 관리 Q&A를 근거로 답해드려요.";
+"chat.intro.disclaimer"      = "일반 정보이며 진단이 아닙니다. 급한 증상은 즉시 안과 진료를 받으세요.";
+
+/* ------- 기관 찾기 ------- */
+"finder.title"               = "기관 찾기";
+"finder.type"                = "유형";
+"finder.type.clinic"         = "안과";
+"finder.type.optical"        = "안경점";
+"finder.type.lasik"          = "라식";
+"finder.search.placeholder"  = "기관명으로 검색";
+"finder.partner"             = "파트너";
+"finder.loadFail"            = "불러오지 못했어요";
+"finder.empty.title"         = "검색 결과가 없어요";
+"finder.empty.body"          = "다른 유형이나 검색어로 시도해 보세요.";
+
+/* ------- 전문가 칼럼 ------- */
+"columns.title"              = "전문가 칼럼";
+"columns.category.all"       = "전체";
+"columns.loadFail"           = "불러오지 못했어요";
+"columns.disclaimer"         = "의료진이 감수한 교육 콘텐츠입니다. 대면 진료를 대체하지 않습니다.";

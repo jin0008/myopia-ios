@@ -1,256 +1,6 @@
 import Foundation
 
-// MARK: - Auth
-
-struct User: Codable, Equatable, Identifiable {
-    let id: String
-    let username: String?
-    let email: String?
-    let role: String
-}
-
-struct AuthResponse: Codable {
-    let user: User
-    let accessToken: String
-    let refreshToken: String
-    let accessTokenExpiresIn: Int
-}
-
-// MARK: - Children
-
-enum Sex: String, Codable, CaseIterable, Identifiable {
-    case male, female
-    var id: String { rawValue }
-    /// Localization key — use `Text(LocalizedStringKey(sex.localizationKey))`
-    /// or `LocalizationStore.shared.string(sex.localizationKey)` to render.
-    var localizationKey: String {
-        self == .male ? "child.sex.male" : "child.sex.female"
-    }
-}
-
-/// Where a `Child` originally came from. The backend reports this as a
-/// string field in the response and we treat unknown values as `.app`
-/// for forward-compatibility.
-enum ChildSource: String, Codable {
-    /// Created via the iOS "add child" flow → `parent_child_link` row.
-    /// The user can edit nickname / DOB / sex and link multiple hospitals.
-    case app
-
-    /// Originated from myopiamanage.org's regular-user "register child"
-    /// flow → `user_patient` row. Read-only on the iOS side; the user
-    /// can delete the link (drops the user_patient row) but cannot
-    /// rename or add additional hospitals.
-    case web
-}
-
-struct Child: Codable, Identifiable {
-    let childId: String
-    /// Defaults to `.app` if the backend response omits the field
-    /// (older backends or migration in progress).
-    var source: ChildSource = .app
-    var nickname: String
-    var dateOfBirth: String   // YYYY-MM-DD from backend
-    var sex: Sex
-    var linkedHospitals: [LinkedHospital]
-
-    var id: String { childId }
-
-    /// True for children that came from the web side. UI should hide
-    /// edit-nickname and add-hospital affordances for these.
-    var isReadOnly: Bool { source == .web }
-
-    private enum CodingKeys: String, CodingKey {
-        case childId, source, nickname, dateOfBirth, sex, linkedHospitals
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        self.childId         = try c.decode(String.self, forKey: .childId)
-        self.source          = try c.decodeIfPresent(ChildSource.self, forKey: .source) ?? .app
-        self.nickname        = try c.decode(String.self, forKey: .nickname)
-        self.dateOfBirth     = try c.decode(String.self, forKey: .dateOfBirth)
-        self.sex             = try c.decode(Sex.self,    forKey: .sex)
-        self.linkedHospitals = try c.decode([LinkedHospital].self, forKey: .linkedHospitals)
-    }
-
-    func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(childId, forKey: .childId)
-        try c.encode(source, forKey: .source)
-        try c.encode(nickname, forKey: .nickname)
-        try c.encode(dateOfBirth, forKey: .dateOfBirth)
-        try c.encode(sex, forKey: .sex)
-        try c.encode(linkedHospitals, forKey: .linkedHospitals)
-    }
-}
-
-struct LinkedHospital: Codable, Identifiable {
-    let hospitalId: String
-    let hospitalName: String
-    let hospitalCode: String
-    let registrationNumber: String
-    let linkedAt: Date
-
-    var id: String { hospitalId }
-}
-
-struct HospitalSummary: Codable, Identifiable {
-    let hospitalId: String
-    let name: String
-    let code: String
-    let country: String?
-
-    var id: String { hospitalId }
-}
-
-// MARK: - Measurements
-
-struct AxialLengthSample: Codable, Identifiable {
-    let date: String       // YYYY-MM-DD
-    let od: Double?
-    let os: Double?
-    let instrumentId: String?
-    let hospitalId: String
-    let hospitalName: String
-
-    var id: String { date + hospitalId }
-}
-
-struct ChildSummary: Codable {
-    let latestAxial: LatestAxial?
-    let riskStatus: String?
-    let measurementCount: Int
-
-    struct LatestAxial: Codable {
-        let date: String
-        let od: Double?
-        let os: Double?
-    }
-}
-
-// MARK: - Parental refraction
-
-enum MyopiaStatus: String, Codable, CaseIterable, Identifiable {
-    case myopia
-    case high_myopia
-    case emmetropia
-    case hyperopia
-    case unknown
-
-    var id: String { rawValue }
-
-    /// Localization-key for the picker label.
-    var localizationKey: String {
-        switch self {
-        case .myopia:      return "parental.status.myopia"
-        case .high_myopia: return "parental.status.highMyopia"
-        case .emmetropia:  return "parental.status.emmetropia"
-        case .hyperopia:   return "parental.status.hyperopia"
-        case .unknown:     return "parental.status.unknown"
-        }
-    }
-}
-
-struct ParentalMyopiaResponse: Codable {
-    let mother: ParentalMyopiaEntry?
-    let father: ParentalMyopiaEntry?
-
-    struct ParentalMyopiaEntry: Codable {
-        let status: MyopiaStatus
-        let recordedAt: Date
-    }
-}
-
-// MARK: - Lifestyle activity
-
-struct LifestyleEntry: Codable, Identifiable {
-    let id: String
-    let hours: Int?
-    let recordedAt: Date
-}
-
-struct LifestyleEntries: Codable {
-    let entries: [LifestyleEntry]
-}
-
-struct LifestyleReminder: Codable {
-    let dueForUpdate: Bool
-    let nearwork: LatestActivity?
-    let outdoor: LatestActivity?
-
-    struct LatestActivity: Codable {
-        let hours: Int?
-        let recordedAt: Date
-    }
-}
-
-// MARK: - Community board (자유게시판)
-
-struct CommunityAuthor: Codable, Equatable, Hashable {
-    let id: String
-    let username: String?
-    let isMe: Bool
-}
-
-/// Used by the list endpoint — `body` is a server-truncated preview.
-struct CommunityPostSummary: Codable, Identifiable, Equatable {
-    let id: String
-    let title: String
-    let bodyPreview: String
-    let author: CommunityAuthor
-    let createdAt: Date
-    let updatedAt: Date
-    let commentCount: Int
-    let likeCount: Int
-    let likedByMe: Bool
-}
-
-struct CommunityPostListResponse: Codable {
-    let posts: [CommunityPostSummary]
-    let nextCursor: String?
-}
-
-/// Full post payload returned by the detail endpoint. Note `body`
-/// rather than `bodyPreview` — same fields otherwise.
-struct CommunityPostDetail: Codable, Identifiable, Equatable {
-    let id: String
-    let title: String
-    let body: String
-    let author: CommunityAuthor
-    let createdAt: Date
-    let updatedAt: Date
-    let commentCount: Int
-    let likeCount: Int
-    let likedByMe: Bool
-}
-
-struct CommunityComment: Codable, Identifiable, Equatable {
-    let id: String
-    let postId: String
-    /// Non-nil → this is a reply to that comment. `nil` → top-level
-    /// comment. The server flattens reply depth to one level.
-    let parentCommentId: String?
-    /// `nil` when the comment has been soft-deleted (`deleted == true`).
-    /// The UI shows a "(deleted)" placeholder in that case.
-    let body: String?
-    let deleted: Bool
-    let author: CommunityAuthor
-    let createdAt: Date
-    let updatedAt: Date
-    let likeCount: Int
-    let likedByMe: Bool
-}
-
-struct CommunityCommentListResponse: Codable {
-    let comments: [CommunityComment]
-}
-
-struct CommunityLikeResponse: Codable {
-    let liked: Bool
-    let likeCount: Int
-}
-
-// MARK: - Endpoint factories
+// Endpoint factories. Model types now come from Core/Generated (openapi).
 
 extension Endpoint {
     static let me = Endpoint(path: "auth/me")
@@ -437,5 +187,41 @@ extension Endpoint {
     }
     static func unlikeCommunityComment(_ id: String) -> Endpoint {
         Endpoint(path: "community/comments/\(id)/like", method: .DELETE)
+    }
+
+    // MARK: - AI 상담 챗봇 / 기관 찾기 / 전문가 칼럼
+
+    /// POST /api/mobile/chat — RAG 챗봇 프록시. 서버가 감수 Q&A를 근거로 답한다.
+    static func chat(question: String, history: [ChatTurn]) -> Endpoint {
+        Endpoint(path: "chat", method: .POST,
+                 body: ChatRequest(question: question, history: history))
+    }
+
+    /// GET /api/mobile/hospitals/search — 안과/안경점/라식 기관 검색.
+    static func hospitalSearch(type: PlaceType,
+                               query: String? = nil,
+                               lat: Double? = nil,
+                               lng: Double? = nil,
+                               limit: Int = 20) -> Endpoint {
+        var q: [(String, String)] = [("type", type.rawValue), ("limit", String(limit))]
+        if let query, !query.isEmpty { q.append(("q", query)) }
+        if let lat { q.append(("lat", String(lat))) }
+        if let lng { q.append(("lng", String(lng))) }
+        return Endpoint(path: "hospitals/search", query: q)
+    }
+
+    /// GET /api/mobile/columns — 전문가 칼럼 목록.
+    static func columns(category: String? = nil,
+                        cursor: String? = nil,
+                        pageSize: Int = 20) -> Endpoint {
+        var q: [(String, String)] = [("pageSize", String(pageSize))]
+        if let category, !category.isEmpty { q.append(("category", category)) }
+        if let cursor { q.append(("cursor", cursor)) }
+        return Endpoint(path: "columns", query: q)
+    }
+
+    /// GET /api/mobile/columns/:id — 칼럼 상세.
+    static func column(_ id: String) -> Endpoint {
+        Endpoint(path: "columns/\(id)")
     }
 }

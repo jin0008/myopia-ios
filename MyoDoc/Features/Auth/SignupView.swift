@@ -33,14 +33,13 @@ struct SignupView: View {
 
     private func submit() async {
         error = nil; isWorking = true; defer { isWorking = false }
-        struct Body: Encodable {
-            let username: String; let password: String; let email: String; let receiveEmailUpdates: Bool
-        }
         do {
+            // Generated SignupRequest carries the correct wire key
+            // (receive_email_updates) via its CodingKeys.
             let r: AuthResponse = try await APIClient.shared.send(
                 Endpoint(path: "auth/signup", method: .POST,
-                         body: Body(username: username, password: password,
-                                    email: email, receiveEmailUpdates: receiveUpdates))
+                         body: SignupRequest(username: username, password: password,
+                                             email: email, receiveEmailUpdates: receiveUpdates))
             )
             await session.signIn(with: r)
         } catch { self.error = error.localizedDescription }

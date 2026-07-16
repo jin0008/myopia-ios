@@ -16,8 +16,8 @@ struct LifestyleActivityView: View {
 
     let childId: String
 
-    @State private var lastNearwork: LifestyleReminder.LatestActivity?
-    @State private var lastOutdoor: LifestyleReminder.LatestActivity?
+    @State private var lastNearwork: LatestActivity?
+    @State private var lastOutdoor: LatestActivity?
     @State private var nearworkHours: Int = 4
     @State private var outdoorHours: Int = 1
     @State private var loading = true
@@ -61,7 +61,7 @@ struct LifestyleActivityView: View {
     private func section(
         kind: ActivityKind,
         titleKey: LocalizedStringKey,
-        last: LifestyleReminder.LatestActivity?,
+        last: LatestActivity?,
         hours: Binding<Int>
     ) -> some View {
         Section(header: Text(titleKey)) {
